@@ -1,99 +1,80 @@
 # Changelog
 
-All notable changes to `filament-whatsapp-conector` will be documented in this file.
+All notable changes to Filament Evolution will be documented in this file.
 
-## [0.2.0] - 2025-12-07
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-### Added
+## [1.0.0] - 2025-01-06
 
-#### SendWhatsappMessageAction
-- Reusable Filament Action for sending WhatsApp messages from anywhere
-- Support for all message types: Text, Image, Video, Audio, Document, Location, Contact
-- Dynamic form with conditional fields based on message type
-- File upload with configurable disk (local, S3, etc.)
-- Pre-fill support for number, instance, and message
-- Option to restrict allowed message types (e.g., `textOnly()`)
-- Full i18n support (English and Portuguese)
+### 🎉 Initial Release
 
-#### CanSendWhatsappMessage Trait
-- Easy-to-use trait for sending messages from any service class
-- Methods: `sendWhatsappText()`, `sendWhatsappImage()`, `sendWhatsappVideo()`, etc.
-- Automatic instance selection with `getWhatsappInstanceId()` override support
-- `hasWhatsappInstance()` check for conditional messaging
+First official release of Filament Evolution - A powerful WhatsApp integration plugin for Filament v4 using Evolution API.
 
-#### WhatsappService
-- High-level service for message sending
-- Automatic phone number formatting (adds country code if missing)
-- Smart file URL handling (local URL vs S3 temporary URLs)
-- Support for all Evolution API message types
-- Instance validation before sending
+### Features
 
-#### Whatsapp Facade
-- Quick access to WhatsappService methods
-- `Whatsapp::sendText()`, `Whatsapp::sendImage()`, etc.
-- `Whatsapp::getConnectedInstances()` for listing active instances
+#### Instance Management
+- Create, edit, and delete WhatsApp instances
+- QR Code connection with real-time updates
+- Instance status monitoring (connected, connecting, disconnected)
+- Profile picture synchronization
+- Connection settings (reject calls, ignore groups, always online, etc.)
 
-#### Media Configuration
-- New config options for media storage:
-  - `EVOLUTION_MEDIA_DISK` - Storage disk for uploads
-  - `EVOLUTION_MEDIA_DIRECTORY` - Upload directory
-  - `EVOLUTION_MEDIA_MAX_SIZE` - Max file size in KB
-- `EVOLUTION_DEFAULT_INSTANCE` - Default instance for trait usage
+#### Messaging
+- Send and receive text messages
+- Support for media types: images, audio, video, documents
+- Location and contact sharing
+- Message status tracking (pending, sent, delivered, read)
+- Content preview in message list
 
-### Fixed
-- Added missing `sendVideo()` method to EvolutionClient
+#### Webhook Integration
+- Automatic webhook event processing
+- Event logging with payload storage
+- Configurable event filtering
+- Error tracking and debugging
 
----
+#### Filament Action
+- `SendWhatsappMessageAction` - Ready-to-use action for sending WhatsApp messages
+- Supports all message types (text, image, audio, video, document, location, contact)
+- Easy integration with any Filament resource
 
-## [0.1.0] - 2025-12-07
-
-### Added
-
-#### Core Features
-- Evolution API v2 integration with full HTTP client
-- WhatsApp instance management (Create, Connect, Delete, Fetch, LogOut, Restart)
-- Real-time QR Code display with Alpine.js countdown timer
-- Pairing code support for WhatsApp Web linking
-- Webhook endpoint for receiving Evolution API events
-- Complete instance settings: reject calls, always online, read messages, sync history, etc.
-
-#### Filament Integration
-- Filament v4 Resource for WhatsApp instances
-- Modern QR Code modal with auto-open after instance creation
-- Table actions for Connect, View, and Edit
-- Status badges with Filament's native components
-- Full translations support (English and Portuguese)
+#### Services & Traits
+- `WhatsappService` - High-level service for message sending
+- `CanSendWhatsappMessage` trait for easy integration
+- `Whatsapp` facade for quick access
+- Automatic phone number formatting
 
 #### Multi-Tenancy
 - Native Filament multi-tenancy support
 - Dynamic tenant column configuration
 - Automatic query scoping by tenant
-- Auto-assignment of tenant on record creation
 
-#### Architecture
-- DTOs with Spatie Laravel Data for type safety
-- Laravel Events for extensibility (InstanceConnected, MessageReceived, etc.)
-- Background job processing for webhooks and messages
-- Configurable webhook events
-- Secure credential storage via environment variables
+#### Internationalization
+Full translation support for 15 languages:
+- 🇺🇸 English (en)
+- 🇧🇷 Portuguese Brazil (pt_BR)
+- 🇸🇦 Arabic (ar)
+- 🇩🇪 German (de)
+- 🇪🇸 Spanish (es)
+- 🇫🇷 French (fr)
+- 🇮🇹 Italian (it)
+- 🇯🇵 Japanese (ja)
+- 🇰🇷 Korean (ko)
+- 🇳🇱 Dutch (nl)
+- 🇵🇱 Polish (pl)
+- 🇷🇺 Russian (ru)
+- 🇹🇷 Turkish (tr)
+- 🇺🇦 Ukrainian (uk)
+- 🇨🇳 Chinese Simplified (zh_CN)
 
-#### Developer Experience
-- Comprehensive configuration file
-- Migration stubs with tenancy support
-- Livewire components for real-time updates
-- PHPStan and Pint ready
+### Technical Details
 
-### Configuration Options
+- **Requires**: PHP 8.2+, Laravel 11+, Filament 4+
+- **Queue Support**: Messages and webhooks processed via Laravel queues
+- **Database**: Migrations for instances, messages, and webhook logs
+- **Config**: Fully customizable via `config/filament-evolution.php`
 
-```env
-# Required
-EVOLUTION_URL=https://your-evolution-api.com
-EVOLUTION_API_KEY=your_api_key
-EVOLUTION_URL_WEBHOOK=https://your-app.com/api/webhooks/evolution
+### Documentation
 
-# Optional
-EVOLUTION_QRCODE_EXPIRES=30
-EVOLUTION_TENANCY_ENABLED=true
-EVOLUTION_TENANT_COLUMN=team_id
-```
+See [README.md](README.md) for installation and usage instructions
 
