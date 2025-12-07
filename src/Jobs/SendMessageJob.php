@@ -46,7 +46,6 @@ class SendMessageJob implements ShouldQueue
             if ($this->messageId) {
                 $this->updateMessageStatus(MessageStatusEnum::SENT, $response);
             }
-
         } catch (EvolutionApiException $e) {
             if ($this->messageId) {
                 $this->updateMessageStatus(MessageStatusEnum::FAILED);

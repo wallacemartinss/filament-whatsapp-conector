@@ -8,6 +8,7 @@ use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use WallaceMartinss\FilamentEvolution\Console\Commands\CleanupCommand;
 use WallaceMartinss\FilamentEvolution\Livewire\QrCodeDisplay;
 use WallaceMartinss\FilamentEvolution\Services\EvolutionClient;
 use WallaceMartinss\FilamentEvolution\Services\WhatsappService;
@@ -29,6 +30,7 @@ class FilamentEvolutionServiceProvider extends PackageServiceProvider
             ->hasViews()
             ->hasTranslations()
             ->hasRoutes(['api'])
+            ->hasCommand(CleanupCommand::class)
             ->hasInstallCommand(function (InstallCommand $command) {
                 $command
                     ->publishConfigFile()

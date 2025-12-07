@@ -66,7 +66,7 @@ class SendWhatsappMessageAction extends Action
 
         $this->modalWidth('lg');
 
-        $this->form(fn (): array => $this->getFormSchema());
+        $this->form(fn(): array => $this->getFormSchema());
 
         $this->action(function (array $data): void {
             $this->sendMessage($data);
@@ -238,21 +238,21 @@ class SendWhatsappMessageAction extends Action
                     $this->getLatitudeInput(),
                     $this->getLongitudeInput(),
                 ])
-                ->visible(fn (Get $get): bool => $get('type') === MessageTypeEnum::LOCATION->value),
+                ->visible(fn(Get $get): bool => $get('type') === MessageTypeEnum::LOCATION->value),
 
             Grid::make(2)
                 ->schema([
                     $this->getLocationNameInput(),
                     $this->getLocationAddressInput(),
                 ])
-                ->visible(fn (Get $get): bool => $get('type') === MessageTypeEnum::LOCATION->value),
+                ->visible(fn(Get $get): bool => $get('type') === MessageTypeEnum::LOCATION->value),
 
             Grid::make(2)
                 ->schema([
                     $this->getContactNameInput(),
                     $this->getContactNumberInput(),
                 ])
-                ->visible(fn (Get $get): bool => $get('type') === MessageTypeEnum::CONTACT->value),
+                ->visible(fn(Get $get): bool => $get('type') === MessageTypeEnum::CONTACT->value),
         ];
     }
 
@@ -337,7 +337,7 @@ class SendWhatsappMessageAction extends Action
         $types = ! empty($this->allowedTypes) ? $this->allowedTypes : $allTypes;
 
         return collect($types)
-            ->mapWithKeys(fn (MessageTypeEnum $type) => [$type->value => $type->getLabel()])
+            ->mapWithKeys(fn(MessageTypeEnum $type) => [$type->value => $type->getLabel()])
             ->toArray();
     }
 
@@ -346,8 +346,8 @@ class SendWhatsappMessageAction extends Action
         return Textarea::make('message')
             ->label(__('filament-evolution::action.message'))
             ->default($this->defaultMessage)
-            ->required(fn (Get $get): bool => $get('type') === MessageTypeEnum::TEXT->value)
-            ->visible(fn (Get $get): bool => $get('type') === MessageTypeEnum::TEXT->value)
+            ->required(fn(Get $get): bool => $get('type') === MessageTypeEnum::TEXT->value)
+            ->visible(fn(Get $get): bool => $get('type') === MessageTypeEnum::TEXT->value)
             ->rows(4)
             ->placeholder(__('filament-evolution::action.message_placeholder'));
     }
@@ -356,7 +356,7 @@ class SendWhatsappMessageAction extends Action
     {
         return Textarea::make('caption')
             ->label(__('filament-evolution::action.caption'))
-            ->visible(fn (Get $get): bool => in_array($get('type'), [
+            ->visible(fn(Get $get): bool => in_array($get('type'), [
                 MessageTypeEnum::IMAGE->value,
                 MessageTypeEnum::VIDEO->value,
                 MessageTypeEnum::DOCUMENT->value,
@@ -369,13 +369,13 @@ class SendWhatsappMessageAction extends Action
     {
         return FileUpload::make('media')
             ->label(__('filament-evolution::action.media'))
-            ->required(fn (Get $get): bool => in_array($get('type'), [
+            ->required(fn(Get $get): bool => in_array($get('type'), [
                 MessageTypeEnum::IMAGE->value,
                 MessageTypeEnum::VIDEO->value,
                 MessageTypeEnum::AUDIO->value,
                 MessageTypeEnum::DOCUMENT->value,
             ]))
-            ->visible(fn (Get $get): bool => in_array($get('type'), [
+            ->visible(fn(Get $get): bool => in_array($get('type'), [
                 MessageTypeEnum::IMAGE->value,
                 MessageTypeEnum::VIDEO->value,
                 MessageTypeEnum::AUDIO->value,
@@ -383,7 +383,7 @@ class SendWhatsappMessageAction extends Action
             ]))
             ->disk($this->mediaDisk ?? config('filament-evolution.media.disk', 'public'))
             ->directory(config('filament-evolution.media.directory', 'whatsapp-media'))
-            ->acceptedFileTypes(fn (Get $get): array => $this->getAcceptedFileTypes($get('type')))
+            ->acceptedFileTypes(fn(Get $get): array => $this->getAcceptedFileTypes($get('type')))
             ->maxSize(config('filament-evolution.media.max_size', 16384))
             ->helperText(__('filament-evolution::action.media_helper'));
     }
@@ -411,7 +411,7 @@ class SendWhatsappMessageAction extends Action
     {
         return TextInput::make('latitude')
             ->label(__('filament-evolution::action.latitude'))
-            ->required(fn (Get $get): bool => $get('type') === MessageTypeEnum::LOCATION->value)
+            ->required(fn(Get $get): bool => $get('type') === MessageTypeEnum::LOCATION->value)
             ->numeric()
             ->step(0.000001)
             ->placeholder('-23.5505');
@@ -421,7 +421,7 @@ class SendWhatsappMessageAction extends Action
     {
         return TextInput::make('longitude')
             ->label(__('filament-evolution::action.longitude'))
-            ->required(fn (Get $get): bool => $get('type') === MessageTypeEnum::LOCATION->value)
+            ->required(fn(Get $get): bool => $get('type') === MessageTypeEnum::LOCATION->value)
             ->numeric()
             ->step(0.000001)
             ->placeholder('-46.6333');
@@ -445,7 +445,7 @@ class SendWhatsappMessageAction extends Action
     {
         return TextInput::make('contact_name')
             ->label(__('filament-evolution::action.contact_name'))
-            ->required(fn (Get $get): bool => $get('type') === MessageTypeEnum::CONTACT->value)
+            ->required(fn(Get $get): bool => $get('type') === MessageTypeEnum::CONTACT->value)
             ->placeholder('John Doe');
     }
 
@@ -453,7 +453,7 @@ class SendWhatsappMessageAction extends Action
     {
         return TextInput::make('contact_number')
             ->label(__('filament-evolution::action.contact_number'))
-            ->required(fn (Get $get): bool => $get('type') === MessageTypeEnum::CONTACT->value)
+            ->required(fn(Get $get): bool => $get('type') === MessageTypeEnum::CONTACT->value)
             ->tel()
             ->placeholder('5511999999999');
     }
@@ -521,7 +521,6 @@ class SendWhatsappMessageAction extends Action
                 ->body(__('filament-evolution::action.success_body'))
                 ->success()
                 ->send();
-
         } catch (\Exception $e) {
             Notification::make()
                 ->title(__('filament-evolution::action.error_title'))

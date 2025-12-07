@@ -11,6 +11,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
@@ -93,43 +94,58 @@ class WhatsappInstanceResource extends Resource
                             ->schema([
                                 Section::make()
                                     ->schema([
-                                        Toggle::make('reject_call')
+                                        ToggleButtons::make('reject_call')
                                             ->label(__('filament-evolution::resource.fields.reject_call'))
                                             ->helperText(__('filament-evolution::resource.fields.reject_call_helper'))
-                                            ->default(config('filament-evolution.instance.reject_call', false)),
+                                            ->default(config('filament-evolution.instance.reject_call', false))
+                                            ->boolean()
+                                            ->live()
+                                            ->inline(),
+
+                                        ToggleButtons::make('groups_ignore')
+                                            ->label(__('filament-evolution::resource.fields.groups_ignore'))
+                                            ->helperText(__('filament-evolution::resource.fields.groups_ignore_helper'))
+                                            ->default(config('filament-evolution.instance.groups_ignore', false))
+                                            ->boolean()
+                                            ->inline(),
+
+                                        ToggleButtons::make('always_online')
+                                            ->label(__('filament-evolution::resource.fields.always_online'))
+                                            ->helperText(__('filament-evolution::resource.fields.always_online_helper'))
+                                            ->default(config('filament-evolution.instance.always_online', false))
+                                            ->boolean()
+                                            ->inline(),
+
+                                        ToggleButtons::make('read_messages')
+                                            ->label(__('filament-evolution::resource.fields.read_messages'))
+                                            ->helperText(__('filament-evolution::resource.fields.read_messages_helper'))
+                                            ->default(config('filament-evolution.instance.read_messages', false))
+                                            ->boolean()
+                                            ->inline(),
+
+                                        ToggleButtons::make('read_status')
+                                            ->label(__('filament-evolution::resource.fields.read_status'))
+                                            ->helperText(__('filament-evolution::resource.fields.read_status_helper'))
+                                            ->default(config('filament-evolution.instance.read_status', false))
+                                            ->boolean()
+                                            ->inline(),
+
+                                        ToggleButtons::make('sync_full_history')
+                                            ->label(__('filament-evolution::resource.fields.sync_full_history'))
+                                            ->helperText(__('filament-evolution::resource.fields.sync_full_history_helper'))
+                                            ->default(config('filament-evolution.instance.sync_full_history', false))
+                                            ->boolean()
+                                            ->inline(),
 
                                         TextInput::make('msg_call')
                                             ->label(__('filament-evolution::resource.fields.msg_call'))
                                             ->helperText(__('filament-evolution::resource.fields.msg_call_helper'))
+                                            ->hidden(fn($get) => $get('reject_call') == false)
                                             ->maxLength(255)
-                                            ->default(config('filament-evolution.instance.msg_call', '')),
-
-                                        Toggle::make('groups_ignore')
-                                            ->label(__('filament-evolution::resource.fields.groups_ignore'))
-                                            ->helperText(__('filament-evolution::resource.fields.groups_ignore_helper'))
-                                            ->default(config('filament-evolution.instance.groups_ignore', false)),
-
-                                        Toggle::make('always_online')
-                                            ->label(__('filament-evolution::resource.fields.always_online'))
-                                            ->helperText(__('filament-evolution::resource.fields.always_online_helper'))
-                                            ->default(config('filament-evolution.instance.always_online', false)),
-
-                                        Toggle::make('read_messages')
-                                            ->label(__('filament-evolution::resource.fields.read_messages'))
-                                            ->helperText(__('filament-evolution::resource.fields.read_messages_helper'))
-                                            ->default(config('filament-evolution.instance.read_messages', false)),
-
-                                        Toggle::make('read_status')
-                                            ->label(__('filament-evolution::resource.fields.read_status'))
-                                            ->helperText(__('filament-evolution::resource.fields.read_status_helper'))
-                                            ->default(config('filament-evolution.instance.read_status', false)),
-
-                                        Toggle::make('sync_full_history')
-                                            ->label(__('filament-evolution::resource.fields.sync_full_history'))
-                                            ->helperText(__('filament-evolution::resource.fields.sync_full_history_helper'))
-                                            ->default(config('filament-evolution.instance.sync_full_history', false)),
+                                            ->default(config('filament-evolution.instance.msg_call', ''))
+                                            ->columnSpanFull(),
                                     ])
-                                    ->columns(2),
+                                    ->columns(3),
                             ]),
                     ])
                     ->columnSpanFull(),
@@ -142,8 +158,9 @@ class WhatsappInstanceResource extends Resource
             ->columns([
                 ImageColumn::make('profile_picture_url')
                     ->label('')
+                    ->alignCenter()
                     ->circular()
-                    ->defaultImageUrl(fn () => 'https://ui-avatars.com/api/?name=WA&color=7F9CF5&background=EBF4FF'),
+                    ->defaultImageUrl(fn() => 'https://ui-avatars.com/api/?name=WA&color=7F9CF5&background=EBF4FF'),
 
                 TextColumn::make('name')
                     ->label(__('filament-evolution::resource.fields.name'))
@@ -152,15 +169,18 @@ class WhatsappInstanceResource extends Resource
 
                 TextColumn::make('number')
                     ->label(__('filament-evolution::resource.fields.number'))
+                    ->alignCenter()
                     ->searchable(),
 
                 TextColumn::make('status')
                     ->label(__('filament-evolution::resource.fields.status'))
                     ->badge()
+                    ->alignCenter()
                     ->sortable(),
 
                 TextColumn::make('created_at')
                     ->label(__('filament-evolution::resource.fields.created_at'))
+                    ->alignCenter()
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -175,17 +195,17 @@ class WhatsappInstanceResource extends Resource
                 SelectFilter::make('status')
                     ->options(StatusConnectionEnum::class),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('connect')
                     ->label(__('filament-evolution::resource.actions.connect'))
                     ->icon(Heroicon::QrCode)
                     ->color('success')
-                    ->action(fn ($record, $livewire) => $livewire->openConnectModal((string) $record->id))
-                    ->hidden(fn ($record): bool => $record->status === StatusConnectionEnum::OPEN),
+                    ->action(fn($record, $livewire) => $livewire->openConnectModal((string) $record->id))
+                    ->hidden(fn($record): bool => $record->status === StatusConnectionEnum::OPEN),
                 ViewAction::make(),
                 EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

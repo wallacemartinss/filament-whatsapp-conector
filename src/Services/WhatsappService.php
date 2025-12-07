@@ -47,7 +47,7 @@ class WhatsappService
 
         // If Brazilian number without country code, add it
         if (strlen($number) === 10 || strlen($number) === 11) {
-            $number = '55'.$number;
+            $number = '55' . $number;
         }
 
         return $number;

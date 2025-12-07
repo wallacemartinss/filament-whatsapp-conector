@@ -83,34 +83,22 @@ class WhatsappWebhookResource extends Resource
                 TextColumn::make('event')
                     ->label(__('filament-evolution::webhook.fields.event'))
                     ->badge()
+                    ->alignCenter()
                     ->sortable(),
 
                 IconColumn::make('processed')
                     ->label(__('filament-evolution::webhook.fields.processed'))
                     ->boolean()
+                    ->alignCenter()
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('heroicon-o-clock')
                     ->trueColor('success')
                     ->falseColor('warning')
                     ->sortable(),
 
-                IconColumn::make('error')
-                    ->label(__('filament-evolution::webhook.fields.has_error'))
-                    ->boolean()
-                    ->getStateUsing(fn ($record) => ! empty($record->error))
-                    ->trueIcon('heroicon-o-x-circle')
-                    ->falseIcon('heroicon-o-check')
-                    ->trueColor('danger')
-                    ->falseColor('success'),
-
-                TextColumn::make('processing_time_ms')
-                    ->label(__('filament-evolution::webhook.fields.processing_time'))
-                    ->suffix(' ms')
-                    ->sortable()
-                    ->placeholder('-'),
-
                 TextColumn::make('created_at')
                     ->label(__('filament-evolution::webhook.fields.created_at'))
+                    ->alignCenter()
                     ->dateTime()
                     ->sortable(),
             ])
@@ -131,12 +119,10 @@ class WhatsappWebhookResource extends Resource
                 TernaryFilter::make('has_error')
                     ->label(__('filament-evolution::webhook.fields.has_error'))
                     ->queries(
-                        true: fn ($query) => $query->whereNotNull('error'),
-                        false: fn ($query) => $query->whereNull('error'),
+                        true: fn($query) => $query->whereNotNull('error'),
+                        false: fn($query) => $query->whereNull('error'),
                     ),
-            ])
-            ->actions([])
-            ->bulkActions([]);
+            ]);
     }
 
     public static function getPages(): array

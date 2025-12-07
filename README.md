@@ -93,75 +93,100 @@ FilamentEvolutionPlugin::make()
 
 ## Configuration
 
-Add these variables to your `.env` file:
+### Environment Variables (.env)
 
-### Required Settings
+Only API credentials should be in your `.env` file:
 
 ```env
-# Evolution API Connection
+# Evolution API Connection (Required)
 EVOLUTION_URL=https://your-evolution-api.com
 EVOLUTION_API_KEY=your_api_key
 
-# Webhook (Required for receiving events)
-EVOLUTION_URL_WEBHOOK=https://your-app.com/api/webhooks/evolution
-EVOLUTION_WEBHOOK_ENABLED=true
+# Webhook URL (Required for receiving events)
+EVOLUTION_WEBHOOK_URL=https://your-app.com/api/evolution/webhook
+
+# Webhook Secret (Optional - for security)
+EVOLUTION_WEBHOOK_SECRET=your_secret_key
+
+# Default Instance (Optional - for single instance setups)
+EVOLUTION_DEFAULT_INSTANCE=your_instance_id
 ```
 
-### Optional Settings
+### Config File
 
-```env
-# QR Code Settings
-EVOLUTION_QRCODE_EXPIRES=30
+All other settings are in `config/filament-evolution.php`. Publish and customize:
 
-# Instance Defaults
-EVOLUTION_REJECT_CALL=false
-EVOLUTION_MSG_CALL="I can't answer calls right now"
-EVOLUTION_GROUPS_IGNORE=false
-EVOLUTION_ALWAYS_ONLINE=false
-EVOLUTION_READ_MESSAGES=false
-EVOLUTION_READ_STATUS=false
-EVOLUTION_SYNC_HISTORY=false
-
-# Media Storage
-EVOLUTION_MEDIA_DISK=public
-EVOLUTION_MEDIA_DIRECTORY=whatsapp-media
-EVOLUTION_MEDIA_MAX_SIZE=16384
-
-# Queue Configuration
-EVOLUTION_QUEUE_ENABLED=true
-EVOLUTION_QUEUE_CONNECTION=redis
-EVOLUTION_QUEUE_NAME=whatsapp
-
-# Storage (save webhooks and messages to database)
-EVOLUTION_STORE_WEBHOOKS=true
-EVOLUTION_STORE_MESSAGES=true
+```bash
+php artisan vendor:publish --tag="filament-evolution-config"
 ```
 
-### Queue Settings
+Key configuration options:
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `EVOLUTION_QUEUE_ENABLED` | `true` | Enable/disable queue processing |
-| `EVOLUTION_QUEUE_CONNECTION` | `null` | Queue connection (null = default) |
-| `EVOLUTION_QUEUE_NAME` | `default` | Queue name for processing webhooks |
+```php
+// config/filament-evolution.php
 
-### Storage Settings
+return [
+    // Queue settings
+    'queue' => [
+        'enabled' => true,
+        'connection' => null,  // null = default connection
+        'name' => 'default',   // queue name
+    ],
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `EVOLUTION_STORE_WEBHOOKS` | `true` | Save webhook events to database |
-| `EVOLUTION_STORE_MESSAGES` | `true` | Save messages to database |
+    // Storage settings
+    'storage' => [
+        'webhooks' => true,    // save webhooks to database
+        'messages' => true,    // save messages to database
+    ],
 
-> **Note:** Disabling storage improves performance but you lose history and the Message/Webhook resources will be empty.
+    // Cleanup policy (automatic deletion of old records)
+    'cleanup' => [
+        'webhooks_days' => 30, // delete webhooks older than 30 days
+        'messages_days' => 90, // delete messages older than 90 days
+    ],
 
-### Multi-Tenancy Settings
+    // Instance defaults
+    'instance' => [
+        'reject_call' => false,
+        'always_online' => false,
+        // ...
+    ],
 
-```env
-EVOLUTION_TENANCY_ENABLED=true
-EVOLUTION_TENANT_COLUMN=team_id
-EVOLUTION_TENANT_TABLE=teams
-EVOLUTION_TENANT_MODEL=App\Models\Team
-EVOLUTION_TENANT_COLUMN_TYPE=uuid
+    // Multi-tenancy
+    'tenancy' => [
+        'enabled' => false,
+        'column' => 'team_id',
+        'table' => 'teams',
+        'model' => 'App\\Models\\Team',
+    ],
+];
+```
+
+---
+
+## Cleanup Command
+
+The plugin includes a cleanup command to remove old records:
+
+```bash
+# Run cleanup with config settings
+php artisan evolution:cleanup
+
+# Preview what would be deleted (dry run)
+php artisan evolution:cleanup --dry-run
+
+# Override config settings
+php artisan evolution:cleanup --webhooks-days=7 --messages-days=30
+```
+
+### Scheduling Cleanup
+
+Add to your `routes/console.php`:
+
+```php
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command('evolution:cleanup')->daily();
 ```
 
 ---

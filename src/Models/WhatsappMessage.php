@@ -8,9 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use WallaceMartinss\FilamentEvolution\Enums\MessageDirectionEnum;
-use WallaceMartinss\FilamentEvolution\Enums\MessageStatusEnum;
-use WallaceMartinss\FilamentEvolution\Enums\MessageTypeEnum;
+use WallaceMartinss\FilamentEvolution\Enums\{MessageDirectionEnum, MessageStatusEnum, MessageTypeEnum};
 use WallaceMartinss\FilamentEvolution\Models\Concerns\HasTenant;
 
 class WhatsappMessage extends Model
@@ -40,14 +38,15 @@ class WhatsappMessage extends Model
     protected function casts(): array
     {
         return [
-            'direction' => MessageDirectionEnum::class,
-            'type' => MessageTypeEnum::class,
-            'status' => MessageStatusEnum::class,
-            'media' => 'array',
-            'raw_payload' => 'array',
-            'sent_at' => 'datetime',
+            'direction'    => MessageDirectionEnum::class,
+            'type'         => MessageTypeEnum::class,
+            'status'       => MessageStatusEnum::class,
+            'content'      => 'array',
+            'media'        => 'array',
+            'raw_payload'  => 'array',
+            'sent_at'      => 'datetime',
             'delivered_at' => 'datetime',
-            'read_at' => 'datetime',
+            'read_at'      => 'datetime',
         ];
     }
 
@@ -94,7 +93,7 @@ class WhatsappMessage extends Model
     public function markAsSent(): void
     {
         $this->update([
-            'status' => MessageStatusEnum::SENT,
+            'status'  => MessageStatusEnum::SENT,
             'sent_at' => now(),
         ]);
     }
@@ -102,7 +101,7 @@ class WhatsappMessage extends Model
     public function markAsDelivered(): void
     {
         $this->update([
-            'status' => MessageStatusEnum::DELIVERED,
+            'status'       => MessageStatusEnum::DELIVERED,
             'delivered_at' => now(),
         ]);
     }
@@ -110,7 +109,7 @@ class WhatsappMessage extends Model
     public function markAsRead(): void
     {
         $this->update([
-            'status' => MessageStatusEnum::READ,
+            'status'  => MessageStatusEnum::READ,
             'read_at' => now(),
         ]);
     }

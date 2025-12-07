@@ -56,7 +56,6 @@ class QrCodeDisplay extends Component
                 $this->instance->update(['status' => StatusConnectionEnum::OPEN]);
                 $this->dispatch('instance-connected');
             }
-
         } catch (EvolutionApiException $e) {
             // Don't show error during poll - instance might not exist yet
             if (! $this->qrCode) {
@@ -87,7 +86,6 @@ class QrCodeDisplay extends Component
 
             // Dispatch event to reset Alpine countdown
             $this->dispatch('qrCodeRefreshed');
-
         } catch (EvolutionApiException $e) {
             $this->error = $e->getMessage();
             $this->isLoading = false;
