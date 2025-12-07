@@ -98,11 +98,29 @@ return [
     |--------------------------------------------------------------------------
     | Queue Configuration
     |--------------------------------------------------------------------------
+    |
+    | Configure which queue connection and queue name to use for processing
+    | webhooks and sending messages. Set to null to use the default queue.
+    |
     */
     'queue' => [
+        'enabled' => env('EVOLUTION_QUEUE_ENABLED', true),
         'connection' => env('EVOLUTION_QUEUE_CONNECTION'),
-        'messages' => env('EVOLUTION_QUEUE_MESSAGES', 'whatsapp'),
-        'webhooks' => env('EVOLUTION_QUEUE_WEBHOOKS', 'default'),
+        'name' => env('EVOLUTION_QUEUE_NAME', 'default'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Storage Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure whether to store webhook events and messages in the database.
+    | Disabling these can improve performance but you'll lose history.
+    |
+    */
+    'storage' => [
+        'webhooks' => env('EVOLUTION_STORE_WEBHOOKS', true),
+        'messages' => env('EVOLUTION_STORE_MESSAGES', true),
     ],
 
     /*

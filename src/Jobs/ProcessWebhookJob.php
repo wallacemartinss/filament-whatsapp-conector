@@ -130,33 +130,40 @@ class ProcessWebhookJob implements ShouldQueue
     {
         $data = MessageUpsertData::fromWebhook($this->payload);
 
-        // Extract remoteJid from payload
-        $messageData = $this->payload['data'] ?? $this->payload;
-        $key = $messageData['key'] ?? [];
-        $remoteJid = $key['remoteJid'] ?? $data->message->phone;
+        // Store message in database if enabled
+        if (config('filament-evolution.storage.messages', true)) {
+            // Extract remoteJid from payload
+            $messageData = $this->payload['data'] ?? $this->payload;
+            $key = $messageData['key'] ?? [];
+            $remoteJid = $key['remoteJid'] ?? $data->message->phone;
 
-        // Store message in database
-        $instance->messages()->create([
-            'message_id' => $data->message->messageId,
-            'remote_jid' => $remoteJid,
-            'phone' => $data->message->phone,
-            'direction' => $data->message->direction,
-            'type' => $data->message->type,
-            'content' => json_encode([
-                'text' => $data->message->text,
-                'media_url' => $data->message->mediaUrl,
-                'media_caption' => $data->message->mediaCaption,
-                'latitude' => $data->message->latitude,
-                'longitude' => $data->message->longitude,
-            ]),
-            'status' => $data->message->status,
-        ]);
+            $instance->messages()->create([
+                'message_id' => $data->message->messageId,
+                'remote_jid' => $remoteJid,
+                'phone' => $data->message->phone,
+                'direction' => $data->message->direction,
+                'type' => $data->message->type,
+                'content' => json_encode([
+                    'text' => $data->message->text,
+                    'media_url' => $data->message->mediaUrl,
+                    'media_caption' => $data->message->mediaCaption,
+                    'latitude' => $data->message->latitude,
+                    'longitude' => $data->message->longitude,
+                ]),
+                'status' => $data->message->status,
+            ]);
+        }
 
         event(new MessageReceived($instance, $data->message));
     }
 
     protected function handleMessageUpdate(WhatsappInstance $instance): void
     {
+        // Only update if message storage is enabled
+        if (! config('filament-evolution.storage.messages', true)) {
+            return;
+        }
+
         $messageData = $this->payload['data'] ?? $this->payload;
         $key = $messageData['key'] ?? [];
         $update = $messageData['update'] ?? [];

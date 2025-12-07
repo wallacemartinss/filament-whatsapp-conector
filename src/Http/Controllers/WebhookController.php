@@ -32,9 +32,9 @@ class WebhookController extends Controller
                 ]);
         }
 
-        // Store webhook in database
+        // Store webhook in database if enabled
         $webhook = null;
-        if (config('filament-evolution.webhook.store_logs', true)) {
+        if (config('filament-evolution.storage.webhooks', true)) {
             $webhook = $this->storeWebhook($event, $payload);
         }
 

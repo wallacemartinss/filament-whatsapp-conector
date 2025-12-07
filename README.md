@@ -126,7 +126,33 @@ EVOLUTION_SYNC_HISTORY=false
 EVOLUTION_MEDIA_DISK=public
 EVOLUTION_MEDIA_DIRECTORY=whatsapp-media
 EVOLUTION_MEDIA_MAX_SIZE=16384
+
+# Queue Configuration
+EVOLUTION_QUEUE_ENABLED=true
+EVOLUTION_QUEUE_CONNECTION=redis
+EVOLUTION_QUEUE_NAME=whatsapp
+
+# Storage (save webhooks and messages to database)
+EVOLUTION_STORE_WEBHOOKS=true
+EVOLUTION_STORE_MESSAGES=true
 ```
+
+### Queue Settings
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `EVOLUTION_QUEUE_ENABLED` | `true` | Enable/disable queue processing |
+| `EVOLUTION_QUEUE_CONNECTION` | `null` | Queue connection (null = default) |
+| `EVOLUTION_QUEUE_NAME` | `default` | Queue name for processing webhooks |
+
+### Storage Settings
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `EVOLUTION_STORE_WEBHOOKS` | `true` | Save webhook events to database |
+| `EVOLUTION_STORE_MESSAGES` | `true` | Save messages to database |
+
+> **Note:** Disabling storage improves performance but you lose history and the Message/Webhook resources will be empty.
 
 ### Multi-Tenancy Settings
 
