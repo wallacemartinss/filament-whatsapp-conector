@@ -47,7 +47,7 @@ class WhatsappService
 
         // If Brazilian number without country code, add it
         if (strlen($number) === 10 || strlen($number) === 11) {
-            $number = '55' . $number;
+            $number = '55'.$number;
         }
 
         return $number;
@@ -68,18 +68,19 @@ class WhatsappService
 
         // For local files, convert to base64 (Evolution API expects raw base64 without data: prefix)
         $storage = Storage::disk($disk);
-        
+
         if (! $storage->exists($path)) {
             throw new EvolutionApiException("File not found: {$path}");
         }
 
         $contents = $storage->get($path);
-        
+
         return base64_encode($contents);
     }
 
     /**
      * Get public URL for a file (supports local and S3).
+     *
      * @deprecated Use getMediaContent() instead for Evolution API
      */
     public function getFileUrl(string $path, ?string $disk = null): string

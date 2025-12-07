@@ -51,7 +51,7 @@ class WhatsappWebhook extends Model
         return ! empty($this->error);
     }
 
-    public function markAsProcessed(int $processingTimeMs = null): void
+    public function markAsProcessed(?int $processingTimeMs = null): void
     {
         $this->update([
             'processed' => true,
@@ -59,7 +59,7 @@ class WhatsappWebhook extends Model
         ]);
     }
 
-    public function markAsFailed(string $error, int $processingTimeMs = null): void
+    public function markAsFailed(string $error, ?int $processingTimeMs = null): void
     {
         $this->update([
             'processed' => false,

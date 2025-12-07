@@ -105,7 +105,7 @@ class ViewWhatsappInstance extends ViewRecord
 
                         Notification::make()
                             ->success()
-                            ->title(__('filament-evolution::resource.fields.status') . ': ' . $status->getLabel())
+                            ->title(__('filament-evolution::resource.fields.status').': '.$status->getLabel())
                             ->send();
 
                     } catch (EvolutionApiException $e) {

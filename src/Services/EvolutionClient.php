@@ -184,7 +184,7 @@ class EvolutionClient
      */
     public function fetchInstance(string $instanceName): array
     {
-        return $this->request('GET', "/instance/fetchInstances", [
+        return $this->request('GET', '/instance/fetchInstances', [
             'instanceName' => $instanceName,
         ]);
     }

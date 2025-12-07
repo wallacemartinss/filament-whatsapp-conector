@@ -64,6 +64,31 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+### Plugin Options
+
+You can customize which resources are available in the panel:
+
+```php
+FilamentEvolutionPlugin::make()
+    ->viewMessageHistory()    // Enable message history resource
+    ->viewWebhookLogs()       // Enable webhook logs resource
+```
+
+| Method | Default | Description |
+|--------|---------|-------------|
+| `whatsappInstanceResource(bool)` | `true` | Show/hide the WhatsApp Instances resource |
+| `viewMessageHistory(bool)` | `false` | Show/hide the Message History resource |
+| `viewWebhookLogs(bool)` | `false` | Show/hide the Webhook Logs resource |
+
+#### Example: Full Configuration
+
+```php
+FilamentEvolutionPlugin::make()
+    ->whatsappInstanceResource()  // Show instances (default: true)
+    ->viewMessageHistory()        // Show message history
+    ->viewWebhookLogs()           // Show webhook logs
+```
+
 ---
 
 ## Configuration

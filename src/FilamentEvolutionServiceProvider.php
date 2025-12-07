@@ -41,7 +41,7 @@ class FilamentEvolutionServiceProvider extends PackageServiceProvider
     public function packageRegistered(): void
     {
         $this->app->singleton(EvolutionClient::class, function () {
-            return new EvolutionClient();
+            return new EvolutionClient;
         });
 
         $this->app->singleton(WhatsappService::class, function ($app) {

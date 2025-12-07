@@ -7,10 +7,16 @@ namespace WallaceMartinss\FilamentEvolution;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use WallaceMartinss\FilamentEvolution\Filament\Resources\WhatsappInstanceResource;
+use WallaceMartinss\FilamentEvolution\Filament\Resources\WhatsappMessageResource;
+use WallaceMartinss\FilamentEvolution\Filament\Resources\WhatsappWebhookResource;
 
 class FilamentEvolutionPlugin implements Plugin
 {
     protected bool $hasWhatsappInstanceResource = true;
+
+    protected bool $hasWhatsappMessageResource = false;
+
+    protected bool $hasWhatsappWebhookResource = false;
 
     public static function make(): static
     {
@@ -32,10 +38,22 @@ class FilamentEvolutionPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
+        $resources = [];
+
         if ($this->hasWhatsappInstanceResource) {
-            $panel->resources([
-                WhatsappInstanceResource::class,
-            ]);
+            $resources[] = WhatsappInstanceResource::class;
+        }
+
+        if ($this->hasWhatsappMessageResource) {
+            $resources[] = WhatsappMessageResource::class;
+        }
+
+        if ($this->hasWhatsappWebhookResource) {
+            $resources[] = WhatsappWebhookResource::class;
+        }
+
+        if (! empty($resources)) {
+            $panel->resources($resources);
         }
     }
 
@@ -44,9 +62,32 @@ class FilamentEvolutionPlugin implements Plugin
         //
     }
 
+    /**
+     * Enable or disable the WhatsApp Instance resource.
+     */
     public function whatsappInstanceResource(bool $condition = true): static
     {
         $this->hasWhatsappInstanceResource = $condition;
+
+        return $this;
+    }
+
+    /**
+     * Enable the Message History resource to view all messages.
+     */
+    public function viewMessageHistory(bool $condition = true): static
+    {
+        $this->hasWhatsappMessageResource = $condition;
+
+        return $this;
+    }
+
+    /**
+     * Enable the Webhook Logs resource to view all webhook events.
+     */
+    public function viewWebhookLogs(bool $condition = true): static
+    {
+        $this->hasWhatsappWebhookResource = $condition;
 
         return $this;
     }

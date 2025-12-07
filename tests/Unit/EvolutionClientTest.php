@@ -11,21 +11,21 @@ class EvolutionClientTest extends TestCase
 {
     public function test_client_can_be_instantiated(): void
     {
-        $client = new EvolutionClient();
+        $client = new EvolutionClient;
 
         $this->assertInstanceOf(EvolutionClient::class, $client);
     }
 
     public function test_client_is_configured_when_has_url_and_key(): void
     {
-        $client = new EvolutionClient();
+        $client = new EvolutionClient;
 
         $this->assertTrue($client->isConfigured());
     }
 
     public function test_client_returns_configured_base_url(): void
     {
-        $client = new EvolutionClient();
+        $client = new EvolutionClient;
 
         $this->assertSame('https://api.evolution.test', $client->getBaseUrl());
     }

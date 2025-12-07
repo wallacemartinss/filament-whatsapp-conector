@@ -52,7 +52,7 @@ class CreateWhatsappInstance extends CreateRecord
             Notification::make()
                 ->warning()
                 ->title(__('filament-evolution::resource.messages.created'))
-                ->body('Instance saved locally. API sync failed: ' . $e->getMessage())
+                ->body('Instance saved locally. API sync failed: '.$e->getMessage())
                 ->send();
         }
     }
