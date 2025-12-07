@@ -1,7 +1,7 @@
 # Filament Evolution - WhatsApp Connector
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/wallacemartinss/filament-whatsapp-conector.svg?style=flat-square)](https://packagist.org/packages/wallacemartinss/filament-whatsapp-conector)
-[![Total Downloads](https://img.shields.io/packagist/dt/wallacemartinss/filament-whatsapp-conector.svg?style=flat-square)](https://packagist.org/packages/wallacemartinss/filament-whatsapp-conector)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/wallacemartinss/filament-evolution.svg?style=flat-square)](https://packagist.org/packages/wallacemartinss/filament-evolution)
+[![Total Downloads](https://img.shields.io/packagist/dt/wallacemartinss/filament-evolution.svg?style=flat-square)](https://packagist.org/packages/wallacemartinss/filament-evolution)
 
 A Filament v4 plugin for WhatsApp integration using [Evolution API v2](https://doc.evolution-api.com/).
 
@@ -11,6 +11,9 @@ A Filament v4 plugin for WhatsApp integration using [Evolution API v2](https://d
 - 🏢 **Multi-Tenancy** - Full support for Filament's native multi-tenancy
 - 📱 **QR Code Connection** - Real-time QR code display with countdown timer
 - 📨 **Webhook Support** - Receive events from Evolution API (messages, connection updates, etc.)
+- 💬 **Message Sending** - Send text, images, videos, audio, documents and more
+- 🎯 **Filament Action** - Ready-to-use action for sending messages from anywhere
+- 🔧 **Service Trait** - Easily integrate message sending into your own services
 - 🔐 **Secure** - Credentials stored in config/env, never in database
 - 🎨 **Filament v4 Native** - Beautiful UI with Filament components and Heroicons
 - 🌍 **Translations** - Full i18n support (English and Portuguese included)
@@ -23,62 +26,31 @@ A Filament v4 plugin for WhatsApp integration using [Evolution API v2](https://d
 - Filament v4
 - Evolution API v2 instance
 
+---
+
 ## Installation
 
+### Step 1: Install via Composer
+
 ```bash
-composer require wallacemartinss/filament-whatsapp-conector
+composer require wallacemartinss/filament-evolution
 ```
 
-Publish the config file:
+### Step 2: Publish Configuration
 
 ```bash
 php artisan vendor:publish --tag="filament-evolution-config"
 ```
 
-Run the migrations:
+### Step 3: Run Migrations
 
 ```bash
 php artisan migrate
 ```
 
-## Configuration
+### Step 4: Register the Plugin
 
-Add to your `.env`:
-
-```env
-# Evolution API (Required)
-EVOLUTION_URL=https://your-evolution-api.com
-EVOLUTION_API_KEY=your_api_key
-
-# Webhook (Required for receiving events)
-EVOLUTION_URL_WEBHOOK=https://your-app.com/api/webhooks/evolution
-EVOLUTION_WEBHOOK_ENABLED=true
-
-# QR Code Settings
-EVOLUTION_QRCODE_EXPIRES=30
-
-# Instance Defaults (Optional)
-EVOLUTION_REJECT_CALL=false
-EVOLUTION_MSG_CALL="I can't answer calls right now"
-EVOLUTION_GROUPS_IGNORE=false
-EVOLUTION_ALWAYS_ONLINE=false
-EVOLUTION_READ_MESSAGES=false
-EVOLUTION_READ_STATUS=false
-EVOLUTION_SYNC_HISTORY=false
-
-# Multi-Tenancy (Optional)
-EVOLUTION_TENANCY_ENABLED=true
-EVOLUTION_TENANT_COLUMN=team_id
-EVOLUTION_TENANT_TABLE=teams
-EVOLUTION_TENANT_MODEL=App\Models\Team
-EVOLUTION_TENANT_COLUMN_TYPE=uuid
-```
-
-## Usage
-
-### Register the Plugin
-
-Add to your Filament Panel Provider:
+Add the plugin to your Filament Panel Provider:
 
 ```php
 use WallaceMartinss\FilamentEvolution\FilamentEvolutionPlugin;
@@ -92,6 +64,59 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+---
+
+## Configuration
+
+Add these variables to your `.env` file:
+
+### Required Settings
+
+```env
+# Evolution API Connection
+EVOLUTION_URL=https://your-evolution-api.com
+EVOLUTION_API_KEY=your_api_key
+
+# Webhook (Required for receiving events)
+EVOLUTION_URL_WEBHOOK=https://your-app.com/api/webhooks/evolution
+EVOLUTION_WEBHOOK_ENABLED=true
+```
+
+### Optional Settings
+
+```env
+# QR Code Settings
+EVOLUTION_QRCODE_EXPIRES=30
+
+# Instance Defaults
+EVOLUTION_REJECT_CALL=false
+EVOLUTION_MSG_CALL="I can't answer calls right now"
+EVOLUTION_GROUPS_IGNORE=false
+EVOLUTION_ALWAYS_ONLINE=false
+EVOLUTION_READ_MESSAGES=false
+EVOLUTION_READ_STATUS=false
+EVOLUTION_SYNC_HISTORY=false
+
+# Media Storage
+EVOLUTION_MEDIA_DISK=public
+EVOLUTION_MEDIA_DIRECTORY=whatsapp-media
+EVOLUTION_MEDIA_MAX_SIZE=16384
+```
+
+### Multi-Tenancy Settings
+
+```env
+EVOLUTION_TENANCY_ENABLED=true
+EVOLUTION_TENANT_COLUMN=team_id
+EVOLUTION_TENANT_TABLE=teams
+EVOLUTION_TENANT_MODEL=App\Models\Team
+EVOLUTION_TENANT_COLUMN_TYPE=uuid
+```
+
+---
+
+## Instance Management
+
 ### Creating an Instance
 
 1. Navigate to **WhatsApp > Instances**
@@ -103,8 +128,6 @@ public function panel(Panel $panel): Panel
 
 ### Instance Settings
 
-When creating an instance, you can configure:
-
 | Setting | Description |
 |---------|-------------|
 | **Reject Calls** | Automatically reject incoming calls |
@@ -115,17 +138,263 @@ When creating an instance, you can configure:
 | **Read Status** | Automatically view status updates |
 | **Sync Full History** | Sync all message history on connection |
 
-### Webhook Events
+---
 
-The following events are sent to your webhook:
+## Sending Messages
 
-- `APPLICATION_STARTUP` - API started
-- `QRCODE_UPDATED` - New QR code generated
-- `CONNECTION_UPDATE` - Connection status changed
-- `NEW_TOKEN` - New authentication token
-- `SEND_MESSAGE` - Message sent
-- `PRESENCE_UPDATE` - Contact online/offline
-- `MESSAGES_UPSERT` - New message received
+The plugin provides three ways to send WhatsApp messages:
+
+1. **Filament Action** - For UI-based sending in tables, pages and widgets
+2. **Whatsapp Facade** - For quick message sending anywhere
+3. **CanSendWhatsappMessage Trait** - For integration into your services
+
+### 1. Using the Filament Action
+
+The `SendWhatsappMessageAction` can be used in any Filament page, resource, or widget.
+
+#### Basic Usage
+
+```php
+use WallaceMartinss\FilamentEvolution\Actions\SendWhatsappMessageAction;
+
+// In a table
+public function table(Table $table): Table
+{
+    return $table
+        ->actions([
+            SendWhatsappMessageAction::make(),
+        ]);
+}
+
+// In a page header
+protected function getHeaderActions(): array
+{
+    return [
+        SendWhatsappMessageAction::make(),
+    ];
+}
+```
+
+#### Pre-filling Values
+
+```php
+SendWhatsappMessageAction::make()
+    ->number('5511999999999')              // Default phone number
+    ->instance($instanceId)                 // Default instance
+    ->message('Hello World!')               // Default message
+```
+
+#### Using with Table Records
+
+Get the phone number automatically from the record:
+
+```php
+// Using attribute name
+SendWhatsappMessageAction::make()
+    ->numberFrom('phone'),
+
+// Using dot notation for relationships
+SendWhatsappMessageAction::make()
+    ->numberFrom('contact.phone'),
+
+// Using closure for custom logic
+SendWhatsappMessageAction::make()
+    ->numberFrom(fn ($record) => $record->celular ?? $record->telefone),
+
+// Also set instance from record
+SendWhatsappMessageAction::make()
+    ->numberFrom('phone')
+    ->instanceFrom('whatsapp_instance_id'),
+```
+
+#### Hiding Form Fields
+
+```php
+SendWhatsappMessageAction::make()
+    ->hideInstanceSelect()     // Hide instance selector
+    ->hideNumberInput()        // Hide phone number input
+    ->textOnly()               // Only allow text messages (hide file upload)
+```
+
+#### Limiting Message Types
+
+```php
+use WallaceMartinss\FilamentEvolution\Enums\MessageTypeEnum;
+
+SendWhatsappMessageAction::make()
+    ->allowedTypes([
+        MessageTypeEnum::TEXT,
+        MessageTypeEnum::IMAGE,
+    ]);
+```
+
+#### Custom Storage Disk
+
+```php
+SendWhatsappMessageAction::make()
+    ->disk('s3')   // Use S3 for file uploads
+```
+
+---
+
+### 2. Using the Whatsapp Facade
+
+For programmatic message sending from anywhere in your application:
+
+```php
+use WallaceMartinss\FilamentEvolution\Facades\Whatsapp;
+
+// Send text
+Whatsapp::sendText($instanceId, '5511999999999', 'Hello!');
+
+// Send image with caption
+Whatsapp::sendImage($instanceId, '5511999999999', 'path/to/image.jpg', 'Check this out!');
+
+// Send video with caption
+Whatsapp::sendVideo($instanceId, '5511999999999', 'path/to/video.mp4', 'Watch this!');
+
+// Send audio
+Whatsapp::sendAudio($instanceId, '5511999999999', 'path/to/audio.mp3');
+
+// Send document
+Whatsapp::sendDocument($instanceId, '5511999999999', 'path/to/file.pdf', 'report.pdf', 'Monthly Report');
+
+// Send location
+Whatsapp::sendLocation($instanceId, '5511999999999', -23.5505, -46.6333, 'My Office', 'São Paulo, SP');
+
+// Send contact card
+Whatsapp::sendContact($instanceId, '5511999999999', 'John Doe', '+5511888888888');
+
+// Generic send method
+Whatsapp::send($instanceId, '5511999999999', 'text', 'Hello World!');
+Whatsapp::send($instanceId, '5511999999999', 'image', 'path/to/image.jpg', ['caption' => 'Nice!']);
+```
+
+---
+
+### 3. Using the Trait in Your Services
+
+Add the `CanSendWhatsappMessage` trait to integrate message sending into your business logic:
+
+```php
+use WallaceMartinss\FilamentEvolution\Concerns\CanSendWhatsappMessage;
+
+class InvoiceService
+{
+    use CanSendWhatsappMessage;
+
+    public function sendPaymentReminder(Invoice $invoice): void
+    {
+        $this->sendWhatsappText(
+            $invoice->customer->phone,
+            "Hello {$invoice->customer->name}, your invoice #{$invoice->number} is due on {$invoice->due_date->format('d/m/Y')}."
+        );
+    }
+
+    public function sendInvoicePdf(Invoice $invoice): void
+    {
+        $this->sendWhatsappDocument(
+            $invoice->customer->phone,
+            $invoice->pdf_path,
+            "invoice-{$invoice->number}.pdf",
+            "Your invoice is ready!"
+        );
+    }
+
+    public function sendPromoImage(Customer $customer, string $imagePath): void
+    {
+        $this->sendWhatsappImage(
+            $customer->phone,
+            $imagePath,
+            "Special promotion just for you! 🎉"
+        );
+    }
+}
+```
+
+#### Available Trait Methods
+
+| Method | Description |
+|--------|-------------|
+| `sendWhatsappText($number, $message)` | Send text message |
+| `sendWhatsappImage($number, $path, $caption)` | Send image |
+| `sendWhatsappVideo($number, $path, $caption)` | Send video |
+| `sendWhatsappAudio($number, $path)` | Send audio |
+| `sendWhatsappDocument($number, $path, $fileName, $caption)` | Send document |
+| `sendWhatsappLocation($number, $lat, $lng, $name, $address)` | Send location |
+| `sendWhatsappContact($number, $contactName, $contactNumber)` | Send contact card |
+| `sendWhatsappMessage($number, $type, $content, $options)` | Generic send method |
+| `hasWhatsappInstance()` | Check if an instance is available |
+| `getConnectedWhatsappInstances()` | Get all connected instances |
+
+#### Customizing the Instance Selection
+
+Override `getWhatsappInstanceId()` to use a specific instance:
+
+```php
+class TenantInvoiceService
+{
+    use CanSendWhatsappMessage;
+
+    protected function getWhatsappInstanceId(): ?string
+    {
+        // Use tenant's specific WhatsApp instance
+        return auth()->user()->tenant->whatsapp_instance_id;
+    }
+}
+```
+
+---
+
+## Storage Support
+
+The plugin supports both local and cloud storage (S3, etc.) for media files.
+
+### Configuration
+
+```env
+EVOLUTION_MEDIA_DISK=public
+EVOLUTION_MEDIA_DIRECTORY=whatsapp-media
+EVOLUTION_MEDIA_MAX_SIZE=16384
+```
+
+### Using Different Disks
+
+```php
+// Using the Facade with S3
+Whatsapp::sendDocument($instanceId, $number, 'documents/report.pdf', 'report.pdf', null, 's3');
+
+// Using the Action with custom disk
+SendWhatsappMessageAction::make()->disk('s3');
+```
+
+---
+
+## Webhooks
+
+The plugin includes a webhook endpoint to receive events from Evolution API.
+
+### Available Events
+
+| Event | Description |
+|-------|-------------|
+| `APPLICATION_STARTUP` | API started |
+| `QRCODE_UPDATED` | New QR code generated |
+| `CONNECTION_UPDATE` | Connection status changed |
+| `NEW_TOKEN` | New authentication token |
+| `SEND_MESSAGE` | Message sent |
+| `PRESENCE_UPDATE` | Contact online/offline |
+| `MESSAGES_UPSERT` | New message received |
+
+### Webhook URL
+
+Configure this URL in your Evolution API:
+
+```
+https://your-app.com/api/webhooks/evolution
+```
+
+---
 
 ## Multi-Tenancy
 
@@ -135,20 +404,21 @@ The plugin supports Filament's native multi-tenancy. When enabled:
 - Models automatically scope queries by tenant
 - Records are auto-assigned to current tenant on creation
 
-### Enable Multi-Tenancy
+### Configuration
 
 ```env
 EVOLUTION_TENANCY_ENABLED=true
 EVOLUTION_TENANT_COLUMN=team_id
 EVOLUTION_TENANT_TABLE=teams
 EVOLUTION_TENANT_MODEL=App\Models\Team
+EVOLUTION_TENANT_COLUMN_TYPE=uuid
 ```
 
-## API
+---
 
-### Evolution Client
+## Using the Evolution Client Directly
 
-You can use the Evolution client directly:
+For advanced use cases, you can use the Evolution client directly:
 
 ```php
 use WallaceMartinss\FilamentEvolution\Services\EvolutionClient;
@@ -166,13 +436,20 @@ $state = $client->getConnectionState('my-instance');
 
 // Send text message
 $client->sendText('my-instance', '5511999999999', 'Hello World!');
+
+// Send image (path is base64 encoded by the service)
+$client->sendImage('my-instance', '5511999999999', $base64Content, 'image.jpg', 'Check this!');
 ```
+
+---
 
 ## Testing
 
 ```bash
 composer test
 ```
+
+---
 
 ## Changelog
 
@@ -189,10 +466,6 @@ Please review [our security policy](../../security/policy) on how to report secu
 ## Credits
 
 - [Wallace Martins](https://github.com/wallacemartinss)
-
-## License
-
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
 - [All Contributors](../../contributors)
 
 ## License

@@ -10,6 +10,7 @@ use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use WallaceMartinss\FilamentEvolution\Livewire\QrCodeDisplay;
 use WallaceMartinss\FilamentEvolution\Services\EvolutionClient;
+use WallaceMartinss\FilamentEvolution\Services\WhatsappService;
 
 class FilamentEvolutionServiceProvider extends PackageServiceProvider
 {
@@ -41,6 +42,10 @@ class FilamentEvolutionServiceProvider extends PackageServiceProvider
     {
         $this->app->singleton(EvolutionClient::class, function () {
             return new EvolutionClient();
+        });
+
+        $this->app->singleton(WhatsappService::class, function ($app) {
+            return new WhatsappService($app->make(EvolutionClient::class));
         });
     }
 

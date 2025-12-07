@@ -29,7 +29,7 @@ class StatusConnectionEnumTest extends TestCase
     {
         $this->assertSame('success', StatusConnectionEnum::OPEN->getColor());
         $this->assertSame('warning', StatusConnectionEnum::CONNECTING->getColor());
-        $this->assertSame('gray', StatusConnectionEnum::CLOSE->getColor());
+        $this->assertSame('danger', StatusConnectionEnum::CLOSE->getColor());
         $this->assertSame('danger', StatusConnectionEnum::REFUSED->getColor());
     }
 

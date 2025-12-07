@@ -107,6 +107,31 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Media Storage Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for media file uploads when sending messages.
+    |
+    */
+    'media' => [
+        'disk' => env('EVOLUTION_MEDIA_DISK', 'public'),
+        'directory' => env('EVOLUTION_MEDIA_DIRECTORY', 'whatsapp-media'),
+        'max_size' => env('EVOLUTION_MEDIA_MAX_SIZE', 16384), // KB (16MB default)
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Instance
+    |--------------------------------------------------------------------------
+    |
+    | The default instance ID to use when sending messages without specifying one.
+    | Useful for simple use cases with a single WhatsApp instance.
+    |
+    */
+    'default_instance' => env('EVOLUTION_DEFAULT_INSTANCE'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Logging
     |--------------------------------------------------------------------------
     */

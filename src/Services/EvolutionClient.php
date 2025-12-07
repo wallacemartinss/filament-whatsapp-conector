@@ -46,6 +46,12 @@ class EvolutionClient
     protected function request(string $method, string $endpoint, array $data = []): array
     {
         try {
+            // Log request for debugging (without base64 content to avoid huge logs)
+            $logData = $data;
+            if (isset($logData['mediaMessage']['media']) && str_starts_with($logData['mediaMessage']['media'] ?? '', 'data:')) {
+                $logData['mediaMessage']['media'] = '[BASE64 CONTENT OMITTED]';
+            }
+
             $response = match (strtoupper($method)) {
                 'GET' => $this->client()->get($endpoint, $data),
                 'POST' => $this->client()->post($endpoint, $data),
@@ -76,6 +82,12 @@ class EvolutionClient
 
         if ($response->failed()) {
             $message = $body['message'] ?? $body['error'] ?? 'Unknown API error';
+
+            // Log the full response for debugging
+            \Illuminate\Support\Facades\Log::error('Evolution API Error', [
+                'status' => $response->status(),
+                'body' => $body,
+            ]);
 
             throw new EvolutionApiException(
                 message: "Evolution API error: {$message}",
@@ -242,14 +254,47 @@ class EvolutionClient
         ?string $caption = null,
         array $options = []
     ): array {
-        $data = array_merge([
+        $data = [
             'number' => $number,
-            'media' => $imageUrl,
             'mediatype' => 'image',
-        ], $options);
+            'media' => $imageUrl,
+        ];
 
         if ($caption) {
             $data['caption'] = $caption;
+        }
+
+        if (! empty($options)) {
+            $data['options'] = $options;
+        }
+
+        return $this->request('POST', "/message/sendMedia/{$instanceName}", $data);
+    }
+
+    /**
+     * Send a video message.
+     *
+     * @throws EvolutionApiException
+     */
+    public function sendVideo(
+        string $instanceName,
+        string $number,
+        string $videoUrl,
+        ?string $caption = null,
+        array $options = []
+    ): array {
+        $data = [
+            'number' => $number,
+            'mediatype' => 'video',
+            'media' => $videoUrl,
+        ];
+
+        if ($caption) {
+            $data['caption'] = $caption;
+        }
+
+        if (! empty($options)) {
+            $data['options'] = $options;
         }
 
         return $this->request('POST', "/message/sendMedia/{$instanceName}", $data);
@@ -262,10 +307,10 @@ class EvolutionClient
      */
     public function sendAudio(string $instanceName, string $number, string $audioUrl, array $options = []): array
     {
-        return $this->request('POST', "/message/sendWhatsAppAudio/{$instanceName}", array_merge([
+        return $this->request('POST', "/message/sendWhatsAppAudio/{$instanceName}", [
             'number' => $number,
             'audio' => $audioUrl,
-        ], $options));
+        ]);
     }
 
     /**
@@ -281,15 +326,19 @@ class EvolutionClient
         ?string $caption = null,
         array $options = []
     ): array {
-        $data = array_merge([
+        $data = [
             'number' => $number,
-            'media' => $documentUrl,
             'mediatype' => 'document',
+            'media' => $documentUrl,
             'fileName' => $fileName,
-        ], $options);
+        ];
 
         if ($caption) {
             $data['caption'] = $caption;
+        }
+
+        if (! empty($options)) {
+            $data['options'] = $options;
         }
 
         return $this->request('POST', "/message/sendMedia/{$instanceName}", $data);

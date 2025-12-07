@@ -4,12 +4,20 @@ declare(strict_types=1);
 
 namespace WallaceMartinss\FilamentEvolution\Tests\Feature;
 
+use WallaceMartinss\FilamentEvolution\Models\WhatsappInstance;
 use WallaceMartinss\FilamentEvolution\Tests\TestCase;
 
 class WebhookControllerTest extends TestCase
 {
     public function test_webhook_endpoint_returns_success(): void
     {
+        // Create a test instance
+        WhatsappInstance::create([
+            'name' => 'test-instance',
+            'phone' => '5511999999999',
+            'status' => 'close',
+        ]);
+
         $payload = [
             'event' => 'connection.update',
             'instance' => 'test-instance',
@@ -47,6 +55,13 @@ class WebhookControllerTest extends TestCase
     public function test_webhook_endpoint_accepts_authorized_request_with_secret(): void
     {
         config(['filament-evolution.webhook.secret' => 'super-secret']);
+
+        // Create a test instance
+        WhatsappInstance::create([
+            'name' => 'test-instance',
+            'phone' => '5511999999999',
+            'status' => 'close',
+        ]);
 
         $payload = [
             'event' => 'connection.update',

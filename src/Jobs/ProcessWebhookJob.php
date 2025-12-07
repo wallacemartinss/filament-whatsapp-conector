@@ -130,9 +130,15 @@ class ProcessWebhookJob implements ShouldQueue
     {
         $data = MessageUpsertData::fromWebhook($this->payload);
 
+        // Extract remoteJid from payload
+        $messageData = $this->payload['data'] ?? $this->payload;
+        $key = $messageData['key'] ?? [];
+        $remoteJid = $key['remoteJid'] ?? $data->message->phone;
+
         // Store message in database
         $instance->messages()->create([
             'message_id' => $data->message->messageId,
+            'remote_jid' => $remoteJid,
             'phone' => $data->message->phone,
             'direction' => $data->message->direction,
             'type' => $data->message->type,
@@ -190,7 +196,7 @@ class ProcessWebhookJob implements ShouldQueue
     {
         if ($this->webhookId) {
             WhatsappWebhook::where('id', $this->webhookId)->update([
-                'processed_at' => now(),
+                'processed' => true,
             ]);
         }
     }
