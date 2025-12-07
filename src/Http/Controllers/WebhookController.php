@@ -76,7 +76,7 @@ class WebhookController extends Controller
         }
 
         return WhatsappWebhook::create([
-            'whatsapp_instance_id' => $instance?->id,
+            'instance_id' => $instance?->id,
             'event' => $event,
             'payload' => $payload,
         ]);
