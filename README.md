@@ -133,6 +133,16 @@ EVOLUTION_WEBHOOK_SECRET=your_secret_key
 EVOLUTION_DEFAULT_INSTANCE=your_instance_id
 ```
 
+### Step 6: Start the Queue Worker
+
+The plugin uses Laravel queues to process webhooks and send messages. Make sure you have a queue worker running:
+
+```bash
+php artisan queue:work
+```
+
+For production, use a process manager like Supervisor to keep the worker running. See the [Laravel Queue Documentation](https://laravel.com/docs/queues#supervisor-configuration) for more details.
+
 ### Config File
 
 All other settings are in `config/filament-evolution.php`. Publish and customize:
