@@ -45,6 +45,7 @@ php artisan vendor:publish --tag="filament-evolution-config"
 ### Step 3: Run Migrations
 
 ```bash
+php artisan vendor:publish --tag="filament-evolution-migrations"
 php artisan migrate
 ```
 
