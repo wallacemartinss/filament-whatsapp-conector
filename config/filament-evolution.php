@@ -178,10 +178,10 @@ return [
     |
     */
     'tenancy' => [
-        'enabled' => false,
-        'column' => 'team_id',
-        'table' => 'teams',
-        'model' => 'App\\Models\\Team',
-        'column_type' => 'uuid', // 'uuid' or 'id'
+        'enabled' => env('EVOLUTION_TENANCY_ENABLED',false),
+        'column' => env('EVOLUTION_TENANT_COLUMN','team_id'),
+        'table' => env('EVOLUTION_TENANT_TABLE','teams'),
+        'model' => env('EVOLUTION_TENANT_MODEL','App\\Models\\Team'),
+        'column_type' => env('EVOLUTION_TENANT_COLUMN_TYPE','uuid'), // 'uuid' or 'id'
     ],
 ];
