@@ -5,6 +5,8 @@
 
 A Filament v4 plugin for WhatsApp integration using [Evolution API v2](https://doc.evolution-api.com/).
 
+![Filament Evolution - WhatsApp Connector](docs/images/principal.png)
+
 ## Features
 
 - 🔌 **Easy Integration** - Connect your WhatsApp with Evolution API v2
@@ -15,14 +17,28 @@ A Filament v4 plugin for WhatsApp integration using [Evolution API v2](https://d
 - 🎯 **Filament Action** - Ready-to-use action for sending messages from anywhere
 - 🔧 **Service Trait** - Easily integrate message sending into your own services
 - 🔐 **Secure** - Credentials stored in config/env, never in database
-- 🎨 **Filament v4 Native** - Beautiful UI with Filament components and Heroicons
+- 🎨 **Filament v4 Native** - Beautiful UI with Filament components
 - 🌍 **Translations** - Full i18n support (English and Portuguese included)
-- ⚡ **Real-time** - Livewire-powered components with Alpine.js countdown
+- ⚡ **Real-time** - Livewire-powered components with Alpine.js
+
+## Screenshots
+
+<details>
+<summary>📸 Click to view screenshots</summary>
+
+| | |
+|:---:|:---:|
+| ![Screenshot 1](docs/images/screenshot-01.png) | ![Screenshot 2](docs/images/screenshot-02.png) |
+| ![Screenshot 3](docs/images/screenshot-03.png) | ![Screenshot 4](docs/images/screenshot-04.png) |
+| ![Screenshot 5](docs/images/screenshot-05.png) | ![Screenshot 6](docs/images/screenshot-06.png) |
+| ![Screenshot 7](docs/images/screenshot-07.png) | ![Screenshot 8](docs/images/screenshot-08.png) |
+
+</details>
 
 ## Requirements
 
 - PHP 8.2+
-- Laravel 11+
+- Laravel 11.x or 12.x
 - Filament v4
 - Evolution API v2 instance
 
