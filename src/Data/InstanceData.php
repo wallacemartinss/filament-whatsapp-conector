@@ -51,7 +51,7 @@ class InstanceData extends Data
             'read_messages' => $this->readMessages,
             'read_status' => $this->readStatus,
             'sync_full_history' => $this->syncFullHistory,
-        ], fn($value) => $value !== null && $value !== false && $value !== '');
+        ], fn ($value) => $value !== null && $value !== false && $value !== '');
 
         if (! empty($settings)) {
             $payload = array_merge($payload, $settings);

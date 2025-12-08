@@ -119,8 +119,8 @@ class WhatsappWebhookResource extends Resource
                 TernaryFilter::make('has_error')
                     ->label(__('filament-evolution::webhook.fields.has_error'))
                     ->queries(
-                        true: fn($query) => $query->whereNotNull('error'),
-                        false: fn($query) => $query->whereNull('error'),
+                        true: fn ($query) => $query->whereNotNull('error'),
+                        false: fn ($query) => $query->whereNull('error'),
                     ),
             ]);
     }

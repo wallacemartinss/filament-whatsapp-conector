@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace WallaceMartinss\FilamentEvolution\Filament\Resources\WhatsappInstanceResource\Pages;
 
-use Filament\Actions\{Action, DeleteAction, EditAction};
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
@@ -24,9 +26,9 @@ class ViewWhatsappInstance extends ViewRecord
                 ->label(__('filament-evolution::resource.actions.connect'))
                 ->icon(Heroicon::QrCode)
                 ->color('success')
-                ->visible(fn() => $this->record->status !== StatusConnectionEnum::OPEN)
+                ->visible(fn () => $this->record->status !== StatusConnectionEnum::OPEN)
                 ->modalHeading(__('filament-evolution::resource.actions.view_qrcode'))
-                ->modalContent(fn() => view('filament-evolution::components.qr-code-modal', [
+                ->modalContent(fn () => view('filament-evolution::components.qr-code-modal', [
                     'instance' => $this->record,
                 ]))
                 ->modalWidth('md')
@@ -37,7 +39,7 @@ class ViewWhatsappInstance extends ViewRecord
                 ->label(__('filament-evolution::resource.actions.disconnect'))
                 ->icon(Heroicon::XCircle)
                 ->color('danger')
-                ->visible(fn() => $this->record->status === StatusConnectionEnum::OPEN)
+                ->visible(fn () => $this->record->status === StatusConnectionEnum::OPEN)
                 ->requiresConfirmation()
                 ->action(function () {
                     try {
@@ -89,7 +91,7 @@ class ViewWhatsappInstance extends ViewRecord
                         }
 
                         // Extract profile picture URL from fetchInstance response
-                        $instanceData      = is_array($instances) ? ($instances[0] ?? $instances) : $instances;
+                        $instanceData = is_array($instances) ? ($instances[0] ?? $instances) : $instances;
                         $profilePictureUrl = $instanceData['profilePicUrl']
                             ?? $instanceData['instance']['profilePicUrl']
                             ?? null;
@@ -98,20 +100,20 @@ class ViewWhatsappInstance extends ViewRecord
                         $state = $client->getConnectionState($this->record->name);
 
                         $connectionState = $state['state'] ?? $state['instance']['state'] ?? 'close';
-                        $status          = match (strtolower($connectionState)) {
+                        $status = match (strtolower($connectionState)) {
                             'open', 'connected' => StatusConnectionEnum::OPEN,
                             'connecting' => StatusConnectionEnum::CONNECTING,
-                            default      => StatusConnectionEnum::CLOSE,
+                            default => StatusConnectionEnum::CLOSE,
                         };
 
                         $this->record->update([
-                            'status'              => $status,
+                            'status' => $status,
                             'profile_picture_url' => $profilePictureUrl,
                         ]);
 
                         Notification::make()
                             ->success()
-                            ->title(__('filament-evolution::resource.fields.status') . ': ' . $status->getLabel())
+                            ->title(__('filament-evolution::resource.fields.status').': '.$status->getLabel())
                             ->send();
                     } catch (EvolutionApiException $e) {
                         // If 404, instance doesn't exist - try to create it

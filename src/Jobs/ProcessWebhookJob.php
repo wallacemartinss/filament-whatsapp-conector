@@ -7,12 +7,19 @@ namespace WallaceMartinss\FilamentEvolution\Jobs;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\{InteractsWithQueue, SerializesModels};
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use WallaceMartinss\FilamentEvolution\Data\Webhooks\{ConnectionUpdateData, MessageUpsertData, QrCodeUpdatedData};
+use WallaceMartinss\FilamentEvolution\Data\Webhooks\ConnectionUpdateData;
+use WallaceMartinss\FilamentEvolution\Data\Webhooks\MessageUpsertData;
+use WallaceMartinss\FilamentEvolution\Data\Webhooks\QrCodeUpdatedData;
 use WallaceMartinss\FilamentEvolution\Enums\WebhookEventEnum;
-use WallaceMartinss\FilamentEvolution\Events\{InstanceConnected, InstanceDisconnected, MessageReceived, QrCodeUpdated};
-use WallaceMartinss\FilamentEvolution\Models\{WhatsappInstance, WhatsappWebhook};
+use WallaceMartinss\FilamentEvolution\Events\InstanceConnected;
+use WallaceMartinss\FilamentEvolution\Events\InstanceDisconnected;
+use WallaceMartinss\FilamentEvolution\Events\MessageReceived;
+use WallaceMartinss\FilamentEvolution\Events\QrCodeUpdated;
+use WallaceMartinss\FilamentEvolution\Models\WhatsappInstance;
+use WallaceMartinss\FilamentEvolution\Models\WhatsappWebhook;
 
 class ProcessWebhookJob implements ShouldQueue
 {
@@ -38,7 +45,7 @@ class ProcessWebhookJob implements ShouldQueue
         try {
             $instanceName = $this->payload['instance'] ?? $this->payload['instanceName'] ?? null;
 
-            if (!$instanceName) {
+            if (! $instanceName) {
                 $this->markWebhookFailed('No instance name in payload');
 
                 return;
@@ -46,7 +53,7 @@ class ProcessWebhookJob implements ShouldQueue
 
             $instance = WhatsappInstance::where('name', $instanceName)->first();
 
-            if (!$instance) {
+            if (! $instance) {
                 $this->markWebhookFailed("Instance not found: {$instanceName}");
 
                 return;
@@ -60,8 +67,8 @@ class ProcessWebhookJob implements ShouldQueue
             if (config('filament-evolution.logging.webhook_errors', true)) {
                 Log::channel(config('filament-evolution.logging.channel', 'stack'))
                     ->error('Webhook processing failed', [
-                        'event'   => $this->event,
-                        'error'   => $e->getMessage(),
+                        'event' => $this->event,
+                        'error' => $e->getMessage(),
                         'payload' => $this->payload,
                     ]);
             }
@@ -76,10 +83,10 @@ class ProcessWebhookJob implements ShouldQueue
 
         match ($eventEnum) {
             WebhookEventEnum::CONNECTION_UPDATE => $this->handleConnectionUpdate($instance),
-            WebhookEventEnum::QRCODE_UPDATED    => $this->handleQrCodeUpdated($instance),
-            WebhookEventEnum::MESSAGES_UPSERT   => $this->handleMessageUpsert($instance),
-            WebhookEventEnum::MESSAGES_UPDATE   => $this->handleMessageUpdate($instance),
-            default                             => $this->handleUnknownEvent($instance),
+            WebhookEventEnum::QRCODE_UPDATED => $this->handleQrCodeUpdated($instance),
+            WebhookEventEnum::MESSAGES_UPSERT => $this->handleMessageUpsert($instance),
+            WebhookEventEnum::MESSAGES_UPDATE => $this->handleMessageUpdate($instance),
+            default => $this->handleUnknownEvent($instance),
         };
     }
 
@@ -103,8 +110,8 @@ class ProcessWebhookJob implements ShouldQueue
         $data = QrCodeUpdatedData::fromWebhook($this->payload);
 
         $instance->update([
-            'qr_code'            => $data->base64,
-            'pairing_code'       => $data->pairingCode,
+            'qr_code' => $data->base64,
+            'pairing_code' => $data->pairingCode,
             'qr_code_updated_at' => now(),
         ]);
 
@@ -126,23 +133,23 @@ class ProcessWebhookJob implements ShouldQueue
         if (config('filament-evolution.storage.messages', true)) {
             // Extract remoteJid from payload
             $messageData = $this->payload['data'] ?? $this->payload;
-            $key         = $messageData['key'] ?? [];
-            $remoteJid   = $key['remoteJid'] ?? $data->message->phone;
+            $key = $messageData['key'] ?? [];
+            $remoteJid = $key['remoteJid'] ?? $data->message->phone;
 
             $instance->messages()->create([
                 'message_id' => $data->message->messageId,
                 'remote_jid' => $remoteJid,
-                'phone'      => $data->message->phone,
-                'direction'  => $data->message->direction,
-                'type'       => $data->message->type,
-                'content'    => [
-                    'text'          => $data->message->text,
-                    'media_url'     => $data->message->mediaUrl,
+                'phone' => $data->message->phone,
+                'direction' => $data->message->direction,
+                'type' => $data->message->type,
+                'content' => [
+                    'text' => $data->message->text,
+                    'media_url' => $data->message->mediaUrl,
                     'media_caption' => $data->message->mediaCaption,
-                    'latitude'      => $data->message->latitude,
-                    'longitude'     => $data->message->longitude,
+                    'latitude' => $data->message->latitude,
+                    'longitude' => $data->message->longitude,
                 ],
-                'status'      => $data->message->status,
+                'status' => $data->message->status,
                 'raw_payload' => $this->payload,
             ]);
         }
@@ -153,13 +160,13 @@ class ProcessWebhookJob implements ShouldQueue
     protected function handleMessageUpdate(WhatsappInstance $instance): void
     {
         // Only update if message storage is enabled
-        if (!config('filament-evolution.storage.messages', true)) {
+        if (! config('filament-evolution.storage.messages', true)) {
             return;
         }
 
         $messageData = $this->payload['data'] ?? $this->payload;
-        $key         = $messageData['key'] ?? [];
-        $update      = $messageData['update'] ?? [];
+        $key = $messageData['key'] ?? [];
+        $update = $messageData['update'] ?? [];
 
         if (isset($key['id']) && isset($update['status'])) {
             $instance->messages()
@@ -175,7 +182,7 @@ class ProcessWebhookJob implements ShouldQueue
         if (config('filament-evolution.logging.webhook_events', false)) {
             Log::channel(config('filament-evolution.logging.channel', 'stack'))
                 ->info('Unknown webhook event received', [
-                    'event'    => $this->event,
+                    'event' => $this->event,
                     'instance' => $instance->name,
                 ]);
         }

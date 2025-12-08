@@ -57,27 +57,27 @@ class ViewWhatsappMessage extends ViewRecord
                         TextEntry::make('content.media_caption')
                             ->label(__('filament-evolution::message.fields.media_caption'))
                             ->columnSpanFull()
-                            ->visible(fn($record) => !empty($record->content['media_caption'])),
+                            ->visible(fn ($record) => ! empty($record->content['media_caption'])),
 
                         TextEntry::make('content.media_url')
                             ->label(__('filament-evolution::message.fields.media_url'))
                             ->columnSpanFull()
-                            ->url(fn($state) => $state)
-                            ->visible(fn($record) => !empty($record->content['media_url'])),
+                            ->url(fn ($state) => $state)
+                            ->visible(fn ($record) => ! empty($record->content['media_url'])),
 
                         TextEntry::make('location')
                             ->label(__('filament-evolution::message.fields.location'))
-                            ->state(fn($record) => $record->content['latitude'] && $record->content['longitude']
+                            ->state(fn ($record) => $record->content['latitude'] && $record->content['longitude']
                                 ? "Lat: {$record->content['latitude']}, Lng: {$record->content['longitude']}"
                                 : null)
-                            ->visible(fn($record) => !empty($record->content['latitude']) && !empty($record->content['longitude'])),
+                            ->visible(fn ($record) => ! empty($record->content['latitude']) && ! empty($record->content['longitude'])),
 
                         TextEntry::make('media')
                             ->label(__('filament-evolution::message.fields.media'))
                             ->columnSpanFull()
-                            ->state(fn($record) => $this->formatPayloadAsHtml($record->media))
+                            ->state(fn ($record) => $this->formatPayloadAsHtml($record->media))
                             ->html()
-                            ->visible(fn($record) => !empty($record->media)),
+                            ->visible(fn ($record) => ! empty($record->media)),
                     ]),
 
                 Section::make(__('filament-evolution::message.sections.timestamps'))
@@ -104,10 +104,10 @@ class ViewWhatsappMessage extends ViewRecord
                     ->schema([
                         TextEntry::make('raw_payload_display')
                             ->hiddenLabel()
-                            ->state(fn($record) => $this->formatPayloadAsHtml($record->raw_payload))
+                            ->state(fn ($record) => $this->formatPayloadAsHtml($record->raw_payload))
                             ->html()
                             ->copyable()
-                            ->copyableState(fn($record) => $this->formatPayloadAsText($record->raw_payload))
+                            ->copyableState(fn ($record) => $this->formatPayloadAsText($record->raw_payload))
                             ->copyMessage('Payload copiado!')
                             ->copyMessageDuration(1500),
                     ])
@@ -152,7 +152,7 @@ class ViewWhatsappMessage extends ViewRecord
         // Colore null
         $highlighted = preg_replace('/:\s*(null)/', ': <span style="color: #c084fc;">$1</span>', $highlighted);
 
-        return '<pre class="language-json p-4 rounded-lg overflow-x-auto m-0 border" style="background-color: #1e293b; color: #e2e8f0; border-color: #334155;"><code style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.875rem; line-height: 1.5; white-space: pre; display: block;">' . $highlighted . '</code></pre>';
+        return '<pre class="language-json p-4 rounded-lg overflow-x-auto m-0 border" style="background-color: #1e293b; color: #e2e8f0; border-color: #334155;"><code style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.875rem; line-height: 1.5; white-space: pre; display: block;">'.$highlighted.'</code></pre>';
     }
 
     protected function formatPayloadAsText(mixed $payload): string

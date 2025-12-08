@@ -10,7 +10,6 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
@@ -140,7 +139,7 @@ class WhatsappInstanceResource extends Resource
                                         TextInput::make('msg_call')
                                             ->label(__('filament-evolution::resource.fields.msg_call'))
                                             ->helperText(__('filament-evolution::resource.fields.msg_call_helper'))
-                                            ->hidden(fn($get) => $get('reject_call') == false)
+                                            ->hidden(fn ($get) => $get('reject_call') == false)
                                             ->maxLength(255)
                                             ->default(config('filament-evolution.instance.msg_call', ''))
                                             ->columnSpanFull(),
@@ -160,7 +159,7 @@ class WhatsappInstanceResource extends Resource
                     ->label('')
                     ->alignCenter()
                     ->circular()
-                    ->defaultImageUrl(fn() => 'https://ui-avatars.com/api/?name=WA&color=7F9CF5&background=EBF4FF'),
+                    ->defaultImageUrl(fn () => 'https://ui-avatars.com/api/?name=WA&color=7F9CF5&background=EBF4FF'),
 
                 TextColumn::make('name')
                     ->label(__('filament-evolution::resource.fields.name'))
@@ -200,8 +199,8 @@ class WhatsappInstanceResource extends Resource
                     ->label(__('filament-evolution::resource.actions.connect'))
                     ->icon(Heroicon::QrCode)
                     ->color('success')
-                    ->action(fn($record, $livewire) => $livewire->openConnectModal((string) $record->id))
-                    ->hidden(fn($record): bool => $record->status === StatusConnectionEnum::OPEN),
+                    ->action(fn ($record, $livewire) => $livewire->openConnectModal((string) $record->id))
+                    ->hidden(fn ($record): bool => $record->status === StatusConnectionEnum::OPEN),
                 ViewAction::make(),
                 EditAction::make(),
             ])

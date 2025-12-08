@@ -10,7 +10,9 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use WallaceMartinss\FilamentEvolution\Enums\{MessageDirectionEnum, MessageStatusEnum, MessageTypeEnum};
+use WallaceMartinss\FilamentEvolution\Enums\MessageDirectionEnum;
+use WallaceMartinss\FilamentEvolution\Enums\MessageStatusEnum;
+use WallaceMartinss\FilamentEvolution\Enums\MessageTypeEnum;
 use WallaceMartinss\FilamentEvolution\Filament\Resources\WhatsappMessageResource\Pages;
 use WallaceMartinss\FilamentEvolution\Models\WhatsappMessage;
 
@@ -95,7 +97,7 @@ class WhatsappMessageResource extends Resource
                 TextColumn::make('content.text')
                     ->label(__('filament-evolution::message.fields.content'))
                     ->limit(50)
-                    ->tooltip(fn($state) => $state)
+                    ->tooltip(fn ($state) => $state)
                     ->searchable(query: function ($query, string $search) {
                         return $query->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(content, '$.text')) LIKE ?", ["%{$search}%"]);
                     }),
@@ -136,7 +138,7 @@ class WhatsappMessageResource extends Resource
     {
         return [
             'index' => Pages\ListWhatsappMessages::route('/'),
-            'view'  => Pages\ViewWhatsappMessage::route('/{record}'),
+            'view' => Pages\ViewWhatsappMessage::route('/{record}'),
         ];
     }
 }

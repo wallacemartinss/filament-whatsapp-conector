@@ -32,8 +32,8 @@ class ViewWhatsappWebhook extends ViewRecord
                         TextEntry::make('processed')
                             ->label(__('filament-evolution::webhook.fields.processed'))
                             ->badge()
-                            ->formatStateUsing(fn($state) => $state ? __('filament-evolution::webhook.status.yes') : __('filament-evolution::webhook.status.no'))
-                            ->color(fn($state) => $state ? 'success' : 'warning'),
+                            ->formatStateUsing(fn ($state) => $state ? __('filament-evolution::webhook.status.yes') : __('filament-evolution::webhook.status.no'))
+                            ->color(fn ($state) => $state ? 'success' : 'warning'),
 
                         TextEntry::make('processing_time_ms')
                             ->label(__('filament-evolution::webhook.fields.processing_time'))
@@ -58,16 +58,16 @@ class ViewWhatsappWebhook extends ViewRecord
                             ->prose()
                             ->color('danger'),
                     ])
-                    ->visible(fn($record) => ! empty($record->error)),
+                    ->visible(fn ($record) => ! empty($record->error)),
 
                 Section::make(__('filament-evolution::webhook.sections.payload'))
                     ->schema([
                         TextEntry::make('payload_display')
                             ->hiddenLabel()
-                            ->state(fn($record) => $this->formatPayloadAsHtml($record->payload))
+                            ->state(fn ($record) => $this->formatPayloadAsHtml($record->payload))
                             ->html()
                             ->copyable()
-                            ->copyableState(fn($record) => $this->formatPayloadAsText($record->payload))
+                            ->copyableState(fn ($record) => $this->formatPayloadAsText($record->payload))
                             ->copyMessage('Payload copiado!')
                             ->copyMessageDuration(1500),
                     ])
@@ -111,7 +111,7 @@ class ViewWhatsappWebhook extends ViewRecord
         // Colore null
         $highlighted = preg_replace('/:\s*(null)/', ': <span style="color: #c084fc;">$1</span>', $highlighted);
 
-        return '<pre class="language-json p-4 rounded-lg overflow-x-auto m-0 border" style="background-color: #1e293b; color: #e2e8f0; border-color: #334155;"><code style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.875rem; line-height: 1.5; white-space: pre; display: block;">' . $highlighted . '</code></pre>';
+        return '<pre class="language-json p-4 rounded-lg overflow-x-auto m-0 border" style="background-color: #1e293b; color: #e2e8f0; border-color: #334155;"><code style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.875rem; line-height: 1.5; white-space: pre; display: block;">'.$highlighted.'</code></pre>';
     }
 
     protected function formatPayloadAsText(mixed $payload): string
