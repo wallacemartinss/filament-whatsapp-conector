@@ -1,7 +1,7 @@
 # Filament Evolution - WhatsApp Connector
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/wallacemartinss/filament-evolution.svg?style=flat-square)](https://packagist.org/packages/wallacemartinss/filament-evolution)
-[![Total Downloads](https://img.shields.io/packagist/dt/wallacemartinss/filament-evolution.svg?style=flat-square)](https://packagist.org/packages/wallacemartinss/filament-evolution)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/wallacemartinss/filament-whatsapp-conector.svg?style=flat-square)](https://packagist.org/packages/wallacemartinss/filament-whatsapp-conector)
+[![Total Downloads](https://img.shields.io/packagist/dt/wallacemartinss/filament-whatsapp-conector.svg?style=flat-square)](https://packagist.org/packages/wallacemartinss/filament-whatsapp-conector)
 
 A Filament v4 plugin for WhatsApp integration using [Evolution API v2](https://doc.evolution-api.com/).
 
