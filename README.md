@@ -33,7 +33,7 @@ A Filament v4 plugin for WhatsApp integration using [Evolution API v2](https://d
 ### Step 1: Install via Composer
 
 ```bash
-composer require wallacemartinss/filament-evolution
+composer require wallacemartinss/filament-whatsapp-conector
 ```
 
 ### Step 2: Publish Configuration
