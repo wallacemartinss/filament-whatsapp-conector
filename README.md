@@ -33,7 +33,7 @@ A Filament v4 plugin for WhatsApp integration using [Evolution API v2](https://d
 ### Step 1: Install via Composer
 
 ```bash
-composer require wallacemartinss/filament-evolution
+composer require wallacemartinss/filament-whatsapp-conector
 ```
 
 ### Step 2: Publish Configuration
@@ -503,12 +503,16 @@ The plugin supports Filament's native multi-tenancy. When enabled:
 
 ### Configuration
 
-```env
-EVOLUTION_TENANCY_ENABLED=true
-EVOLUTION_TENANT_COLUMN=team_id
-EVOLUTION_TENANT_TABLE=teams
-EVOLUTION_TENANT_MODEL=App\Models\Team
-EVOLUTION_TENANT_COLUMN_TYPE=uuid
+Edit the `config/filament-evolution.php` file:
+
+```php
+'tenancy' => [
+    'enabled' => true,
+    'column' => 'team_id',
+    'table' => 'teams',
+    'model' => 'App\\Models\\Team',
+    'column_type' => 'uuid', // 'uuid' or 'id'
+],
 ```
 
 ---

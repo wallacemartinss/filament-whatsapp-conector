@@ -175,6 +175,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Configuration for Filament multi-tenancy support.
+    | Edit these values directly to enable multi-tenancy in your application.
     |
     */
     'tenancy' => [
