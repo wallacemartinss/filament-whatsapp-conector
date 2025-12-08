@@ -64,6 +64,27 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+### Step 5: Configure Tailwind CSS
+
+Add the plugin's views and source files to your Filament theme CSS file (e.g., `resources/css/filament/admin/theme.css`):
+
+```css
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+/* Add these lines for Filament Evolution */
+@source '../../../../vendor/wallacemartinss/filament-evolution/resources/views/**/*';
+@source '../../../../vendor/wallacemartinss/filament-evolution/src/**/*';
+```
+
+Then rebuild your assets:
+
+```bash
+npm run build
+```
+
 ### Plugin Options
 
 You can customize which resources are available in the panel:
