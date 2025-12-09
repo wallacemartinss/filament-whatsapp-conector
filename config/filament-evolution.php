@@ -38,7 +38,6 @@ return [
             'APPLICATION_STARTUP',
             'QRCODE_UPDATED',
             'CONNECTION_UPDATE',
-            'NEW_TOKEN',
             'SEND_MESSAGE',
             'PRESENCE_UPDATE',
             'MESSAGES_UPSERT',
