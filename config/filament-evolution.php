@@ -34,11 +34,11 @@ return [
         'url' => env('EVOLUTION_WEBHOOK_URL'),
         'secret' => env('EVOLUTION_WEBHOOK_SECRET'),
         'path' => 'api/evolution/webhook',
+        'base64' => false,
         'events' => [
             'APPLICATION_STARTUP',
             'QRCODE_UPDATED',
             'CONNECTION_UPDATE',
-            'NEW_TOKEN',
             'SEND_MESSAGE',
             'PRESENCE_UPDATE',
             'MESSAGES_UPSERT',
