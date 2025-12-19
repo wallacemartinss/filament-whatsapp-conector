@@ -92,8 +92,8 @@ Add the plugin's views and source files to your Filament theme CSS file (e.g., `
 @source '../../../../resources/views/filament/**/*';
 
 /* Add these lines for Filament Evolution */
-@source '../../../../vendor/wallacemartinss/filament-evolution/resources/views/**/*';
-@source '../../../../vendor/wallacemartinss/filament-evolution/src/**/*';
+@source '../../../../vendor/wallacemartinss/filament-whatsapp-conector/resources/views/**/*';
+@source '../../../../vendor/wallacemartinss/filament-whatsapp-conector/src/**/*';
 ```
 
 Then rebuild your assets:
