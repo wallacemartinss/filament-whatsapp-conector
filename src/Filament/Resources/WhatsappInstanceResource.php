@@ -22,6 +22,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use WallaceMartinss\FilamentEvolution\Enums\StatusConnectionEnum;
 use WallaceMartinss\FilamentEvolution\Filament\Resources\WhatsappInstanceResource\Pages;
+use WallaceMartinss\FilamentEvolution\FilamentEvolutionPlugin;
 use WallaceMartinss\FilamentEvolution\Models\WhatsappInstance;
 
 class WhatsappInstanceResource extends Resource
@@ -40,7 +41,7 @@ class WhatsappInstanceResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('filament-evolution::resource.navigation_group');
+        return FilamentEvolutionPlugin::make()->getNavigationGroupLabel();
     }
 
     public static function getNavigationLabel(): string

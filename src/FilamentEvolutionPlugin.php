@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace WallaceMartinss\FilamentEvolution;
 
 use Filament\Contracts\Plugin;
+use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use WallaceMartinss\FilamentEvolution\Filament\Resources\WhatsappInstanceResource;
 use WallaceMartinss\FilamentEvolution\Filament\Resources\WhatsappMessageResource;
@@ -55,6 +56,26 @@ class FilamentEvolutionPlugin implements Plugin
         if (! empty($resources)) {
             $panel->resources($resources);
         }
+
+        // Register the navigation group with sort order
+        $this->registerNavigationGroup($panel);
+    }
+
+    protected function registerNavigationGroup(Panel $panel): void
+    {
+        $groupLabel = $this->getNavigationGroupLabel();
+        $groupSort = config('filament-evolution.filament.navigation_sort', 100);
+
+        $panel->navigationGroups([
+            NavigationGroup::make($groupLabel)
+                ->sort($groupSort),
+        ]);
+    }
+
+    public function getNavigationGroupLabel(): string
+    {
+        return config('filament-evolution.filament.navigation_group')
+            ?? __('filament-evolution::resource.navigation_group');
     }
 
     public function boot(Panel $panel): void
