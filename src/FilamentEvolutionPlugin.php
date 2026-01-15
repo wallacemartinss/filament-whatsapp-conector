@@ -68,7 +68,7 @@ class FilamentEvolutionPlugin implements Plugin
 
         $panel->navigationGroups([
             NavigationGroup::make($groupLabel)
-                ->sort($groupSort),
+                ->order($groupSort),
         ]);
     }
 
