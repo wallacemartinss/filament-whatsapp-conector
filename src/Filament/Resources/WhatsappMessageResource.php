@@ -14,6 +14,7 @@ use WallaceMartinss\FilamentEvolution\Enums\MessageDirectionEnum;
 use WallaceMartinss\FilamentEvolution\Enums\MessageStatusEnum;
 use WallaceMartinss\FilamentEvolution\Enums\MessageTypeEnum;
 use WallaceMartinss\FilamentEvolution\Filament\Resources\WhatsappMessageResource\Pages;
+use WallaceMartinss\FilamentEvolution\FilamentEvolutionPlugin;
 use WallaceMartinss\FilamentEvolution\Models\WhatsappMessage;
 
 class WhatsappMessageResource extends Resource
@@ -32,7 +33,7 @@ class WhatsappMessageResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('filament-evolution::resource.navigation_group');
+        return FilamentEvolutionPlugin::make()->getNavigationGroupLabel();
     }
 
     public static function getNavigationLabel(): string

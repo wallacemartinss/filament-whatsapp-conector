@@ -143,6 +143,7 @@ return [
     */
     'filament' => [
         'navigation_sort' => 100,
+        'navigation_group' => null, // null = use translation, or set a custom group name
     ],
 
     /*

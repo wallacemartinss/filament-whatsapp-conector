@@ -14,6 +14,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use WallaceMartinss\FilamentEvolution\Enums\WebhookEventEnum;
 use WallaceMartinss\FilamentEvolution\Filament\Resources\WhatsappWebhookResource\Pages;
+use WallaceMartinss\FilamentEvolution\FilamentEvolutionPlugin;
 use WallaceMartinss\FilamentEvolution\Models\WhatsappWebhook;
 
 class WhatsappWebhookResource extends Resource
@@ -32,7 +33,7 @@ class WhatsappWebhookResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('filament-evolution::resource.navigation_group');
+        return FilamentEvolutionPlugin::make()->getNavigationGroupLabel();
     }
 
     public static function getNavigationLabel(): string
