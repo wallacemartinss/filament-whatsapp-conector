@@ -43,6 +43,8 @@ return [
         'connect' => 'Conectar',
         'disconnect' => 'Desconectar',
         'delete' => 'Eliminar',
+        'delete_confirmation' => 'Esta acción moverá la instancia a la papelera. Puede restaurarla más tarde.',
+        'force_delete_confirmation' => 'Esta acción eliminará PERMANENTEMENTE la instancia del sistema y de Evolution API. Esta acción no se puede deshacer.',
         'refresh' => 'Actualizar',
         'view_qrcode' => 'Ver Código QR',
         'close' => 'Cerrar',

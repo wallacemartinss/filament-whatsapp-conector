@@ -43,6 +43,8 @@ return [
         'connect' => 'Connetti',
         'disconnect' => 'Disconnetti',
         'delete' => 'Elimina',
+        'delete_confirmation' => 'Questa azione sposterà l\'istanza nel cestino. Potrai ripristinarla in seguito.',
+        'force_delete_confirmation' => 'Questa azione eliminerà PERMANENTEMENTE l\'istanza dal sistema e dall\'API Evolution. Questa azione non può essere annullata.',
         'refresh' => 'Aggiorna',
         'view_qrcode' => 'Visualizza Codice QR',
         'close' => 'Chiudi',

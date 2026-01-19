@@ -9,8 +9,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 use WallaceMartinss\FilamentEvolution\Enums\StatusConnectionEnum;
 use WallaceMartinss\FilamentEvolution\Models\Concerns\HasTenant;
+use WallaceMartinss\FilamentEvolution\Services\EvolutionClient;
 
 class WhatsappInstance extends Model
 {
@@ -20,6 +22,39 @@ class WhatsappInstance extends Model
     use SoftDeletes;
 
     protected $table = 'whatsapp_instances';
+
+    protected static function booted(): void
+    {
+        static::forceDeleting(function (WhatsappInstance $instance) {
+            try {
+                $client = app(EvolutionClient::class);
+
+                // First try to logout (disconnect) if connected
+                try {
+                    $client->logoutInstance($instance->name);
+                    Log::info('WhatsApp instance logged out from Evolution API', [
+                        'instance_name' => $instance->name,
+                    ]);
+                } catch (\Exception $e) {
+                    // Ignore logout errors - instance might already be disconnected
+                }
+
+                // Then delete the instance
+                $client->deleteInstance($instance->name);
+
+                Log::info('WhatsApp instance deleted from Evolution API', [
+                    'instance_id' => $instance->id,
+                    'instance_name' => $instance->name,
+                ]);
+            } catch (\Exception $e) {
+                Log::warning('Failed to delete WhatsApp instance from Evolution API', [
+                    'instance_id' => $instance->id,
+                    'instance_name' => $instance->name,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        });
+    }
 
     protected $fillable = [
         'name',

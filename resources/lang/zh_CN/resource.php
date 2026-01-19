@@ -43,6 +43,8 @@ return [
         'connect' => '连接',
         'disconnect' => '断开连接',
         'delete' => '删除',
+        'delete_confirmation' => '此操作会将实例移至回收站。您可以稍后恢复它。',
+        'force_delete_confirmation' => '此操作将从系统和Evolution API中永久删除该实例。此操作无法撤消。',
         'refresh' => '刷新',
         'view_qrcode' => '查看二维码',
         'close' => '关闭',

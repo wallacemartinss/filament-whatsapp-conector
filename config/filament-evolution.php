@@ -33,8 +33,8 @@ return [
     'webhook' => [
         'url' => env('EVOLUTION_WEBHOOK_URL'),
         'secret' => env('EVOLUTION_WEBHOOK_SECRET'),
-        'path' => 'api/evolution/webhook',
-        'base64' => false,
+        'path' => env('EVOLUTION_WEBHOOK_PATH', 'api/webhooks/evolution'),
+        'base64' => env('EVOLUTION_WEBHOOK_BASE64', false),
         'events' => [
             'APPLICATION_STARTUP',
             'QRCODE_UPDATED',
@@ -55,8 +55,8 @@ return [
     |
     */
     'instance' => [
-        'integration' => 'WHATSAPP-BAILEYS',
-        'qrcode_expires_in' => 30, // seconds
+        'integration' => env('EVOLUTION_INTEGRATION', 'WHATSAPP-BAILEYS'),
+        'qrcode_expires_in' => env('EVOLUTION_QRCODE_EXPIRES', 30), // seconds
         'reject_call' => false,
         'msg_call' => '',
         'groups_ignore' => false,
@@ -90,8 +90,8 @@ return [
     |
     */
     'storage' => [
-        'webhooks' => true,
-        'messages' => true,
+        'webhooks' => env('EVOLUTION_STORE_WEBHOOKS', true),
+        'messages' => env('EVOLUTION_STORE_MESSAGES', true),
     ],
 
     /*

@@ -91,8 +91,8 @@ class WhatsappWebhookResource extends Resource
                     ->label(__('filament-evolution::webhook.fields.processed'))
                     ->boolean()
                     ->alignCenter()
-                    ->trueIcon('heroicon-o-check-circle')
-                    ->falseIcon('heroicon-o-clock')
+                    ->trueIcon(Heroicon::CheckCircle)
+                    ->falseIcon(Heroicon::Clock)
                     ->trueColor('success')
                     ->falseColor('warning')
                     ->sortable(),

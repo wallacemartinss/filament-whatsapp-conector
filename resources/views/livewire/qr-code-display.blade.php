@@ -5,8 +5,8 @@
     init() {
         this.startCountdown();
 
-        // Listen for QR code refresh to reset countdown
-        Livewire.on('qrCodeRefreshed', () => {
+        // Listen for QR code refresh to reset countdown (Livewire v4)
+        $wire.on('qrCodeRefreshed', () => {
             this.countdown = this.ttl;
             this.startCountdown();
         });

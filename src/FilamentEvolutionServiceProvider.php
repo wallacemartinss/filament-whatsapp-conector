@@ -53,6 +53,7 @@ class FilamentEvolutionServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        Livewire::component('filament-evolution::qr-code-display', QrCodeDisplay::class);
+        // Livewire v4 - register without :: namespace
+        Livewire::component('filament-evolution.qr-code-display', QrCodeDisplay::class);
     }
 }

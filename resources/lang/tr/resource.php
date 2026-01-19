@@ -43,6 +43,8 @@ return [
         'connect' => 'Bağlan',
         'disconnect' => 'Bağlantıyı Kes',
         'delete' => 'Sil',
+        'delete_confirmation' => 'Bu işlem örneği çöp kutusuna taşıyacaktır. Daha sonra geri yükleyebilirsiniz.',
+        'force_delete_confirmation' => 'Bu işlem, örneği sistemden ve Evolution API\'den KALICI olarak silecektir. Bu işlem geri alınamaz.',
         'refresh' => 'Yenile',
         'view_qrcode' => 'QR Kodunu Görüntüle',
         'close' => 'Kapat',

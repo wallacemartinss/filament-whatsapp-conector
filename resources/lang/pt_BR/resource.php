@@ -43,6 +43,8 @@ return [
         'connect' => 'Conectar',
         'disconnect' => 'Desconectar',
         'delete' => 'Excluir',
+        'delete_confirmation' => 'Esta ação irá mover a instância para a lixeira. Você poderá restaurá-la posteriormente.',
+        'force_delete_confirmation' => 'Esta ação irá excluir a instância PERMANENTEMENTE do sistema e da Evolution API. Esta ação não pode ser desfeita.',
         'refresh' => 'Atualizar',
         'view_qrcode' => 'Ver QR Code',
         'close' => 'Fechar',

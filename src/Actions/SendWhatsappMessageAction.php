@@ -219,11 +219,8 @@ class SendWhatsappMessageAction extends Action
     protected function getFormSchema(): array
     {
         return [
-            Grid::make(2)
-                ->schema([
-                    $this->getInstanceSelect(),
-                    $this->getNumberInput(),
-                ]),
+            $this->getInstanceSelect(),
+            $this->getNumberInput(),
 
             $this->getTypeSelect(),
 
@@ -285,6 +282,7 @@ class SendWhatsappMessageAction extends Action
             ->searchable()
             ->preload()
             ->visible($this->showInstanceSelect)
+            ->columnSpanFull()
             ->helperText(__('filament-evolution::action.instance_helper'));
     }
 
@@ -306,6 +304,7 @@ class SendWhatsappMessageAction extends Action
             ->tel()
             ->placeholder('5511999999999')
             ->visible($this->showNumberInput)
+            ->columnSpanFull()
             ->helperText(__('filament-evolution::action.number_helper'));
     }
 
@@ -464,8 +463,25 @@ class SendWhatsappMessageAction extends Action
             $service = app(WhatsappService::class);
             $type = MessageTypeEnum::from($data['type'] ?? MessageTypeEnum::TEXT->value);
 
-            $instanceId = $data['instance_id'] ?? $this->defaultInstanceId;
-            $number = $data['number'] ?? $this->defaultNumber;
+            // Get instance ID from form, record attribute, or default
+            $instanceId = $data['instance_id'] ?? null;
+            if (! $instanceId && $this->instanceAttribute) {
+                $record = $this->getRecord();
+                if ($record) {
+                    $instanceId = $this->getInstanceFromRecord($record);
+                }
+            }
+            $instanceId = $instanceId ?? $this->defaultInstanceId;
+
+            // Get number from form, record attribute, or default
+            $number = $data['number'] ?? null;
+            if (! $number && $this->numberAttribute) {
+                $record = $this->getRecord();
+                if ($record) {
+                    $number = $this->getNumberFromRecord($record);
+                }
+            }
+            $number = $number ?? $this->defaultNumber;
 
             if (! $instanceId || ! $number) {
                 throw new \Exception(__('filament-evolution::action.missing_required_fields'));

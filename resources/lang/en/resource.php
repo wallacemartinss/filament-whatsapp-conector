@@ -43,6 +43,8 @@ return [
         'connect' => 'Connect',
         'disconnect' => 'Disconnect',
         'delete' => 'Delete',
+        'delete_confirmation' => 'This action will move the instance to trash. You can restore it later.',
+        'force_delete_confirmation' => 'This action will PERMANENTLY delete the instance from the system and Evolution API. This action cannot be undone.',
         'refresh' => 'Refresh',
         'view_qrcode' => 'View QR Code',
         'close' => 'Close',

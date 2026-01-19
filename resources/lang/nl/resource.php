@@ -43,6 +43,8 @@ return [
         'connect' => 'Verbinden',
         'disconnect' => 'Verbinding Verbreken',
         'delete' => 'Verwijderen',
+        'delete_confirmation' => 'Deze actie verplaatst de instantie naar de prullenbak. U kunt deze later herstellen.',
+        'force_delete_confirmation' => 'Deze actie verwijdert de instantie PERMANENT uit het systeem en de Evolution API. Deze actie kan niet ongedaan worden gemaakt.',
         'refresh' => 'Vernieuwen',
         'view_qrcode' => 'QR-code Bekijken',
         'close' => 'Sluiten',

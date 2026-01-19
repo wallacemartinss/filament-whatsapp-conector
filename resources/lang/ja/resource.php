@@ -43,6 +43,8 @@ return [
         'connect' => '接続',
         'disconnect' => '切断',
         'delete' => '削除',
+        'delete_confirmation' => 'この操作により、インスタンスはゴミ箱に移動されます。後で復元できます。',
+        'force_delete_confirmation' => 'この操作により、システムとEvolution APIからインスタンスが完全に削除されます。この操作は元に戻せません。',
         'refresh' => '更新',
         'view_qrcode' => 'QRコードを表示',
         'close' => '閉じる',

@@ -10,7 +10,7 @@
         </x-slot>
 
         @if ($this->connectInstance && $this->showQrCodeModal)
-            <livewire:filament-evolution::qr-code-display :instance="$this->connectInstance" :key="'qr-' . $this->connectInstance->id" />
+            <livewire:filament-evolution.qr-code-display :instance="$this->connectInstance" :key="'qr-' . $this->connectInstance->id" />
         @endif
     </x-filament::modal>
 </x-filament-panels::page>

@@ -43,6 +43,8 @@ return [
         'connect' => 'Połącz',
         'disconnect' => 'Rozłącz',
         'delete' => 'Usuń',
+        'delete_confirmation' => 'Ta akcja przeniesie instancję do kosza. Możesz ją później przywrócić.',
+        'force_delete_confirmation' => 'Ta akcja TRWALE usunie instancję z systemu i Evolution API. Tej akcji nie można cofnąć.',
         'refresh' => 'Odśwież',
         'view_qrcode' => 'Zobacz Kod QR',
         'close' => 'Zamknij',

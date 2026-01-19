@@ -43,6 +43,8 @@ return [
         'connect' => 'Verbinden',
         'disconnect' => 'Trennen',
         'delete' => 'Löschen',
+        'delete_confirmation' => 'Diese Aktion verschiebt die Instanz in den Papierkorb. Sie können sie später wiederherstellen.',
+        'force_delete_confirmation' => 'Diese Aktion löscht die Instanz DAUERHAFT aus dem System und der Evolution API. Diese Aktion kann nicht rückgängig gemacht werden.',
         'refresh' => 'Aktualisieren',
         'view_qrcode' => 'QR-Code anzeigen',
         'close' => 'Schließen',

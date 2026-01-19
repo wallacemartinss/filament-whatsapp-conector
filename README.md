@@ -3,7 +3,7 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/wallacemartinss/filament-whatsapp-conector.svg?style=flat-square)](https://packagist.org/packages/wallacemartinss/filament-whatsapp-conector)
 [![Total Downloads](https://img.shields.io/packagist/dt/wallacemartinss/filament-whatsapp-conector.svg?style=flat-square)](https://packagist.org/packages/wallacemartinss/filament-whatsapp-conector)
 
-A Filament v4 plugin for WhatsApp integration using [Evolution API v2](https://doc.evolution-api.com/).
+A Filament v5 plugin for WhatsApp integration using [Evolution API v2](https://doc.evolution-api.com/).
 
 ![Filament Evolution - WhatsApp Connector](docs/images/principal.png)
 
@@ -17,7 +17,7 @@ A Filament v4 plugin for WhatsApp integration using [Evolution API v2](https://d
 - 🎯 **Filament Action** - Ready-to-use action for sending messages from anywhere
 - 🔧 **Service Trait** - Easily integrate message sending into your own services
 - 🔐 **Secure** - Credentials stored in config/env, never in database
-- 🎨 **Filament v4 Native** - Beautiful UI with Filament components
+- 🎨 **Filament v5 Native** - Beautiful UI with Filament components
 - 🌍 **Translations** - Full i18n support (English and Portuguese included)
 - ⚡ **Real-time** - Livewire-powered components with Alpine.js
 
@@ -39,7 +39,8 @@ A Filament v4 plugin for WhatsApp integration using [Evolution API v2](https://d
 
 - PHP 8.2+
 - Laravel 11.x or 12.x
-- Filament v4
+- Filament v5
+- Livewire v4
 - Evolution API v2 instance
 
 ---
@@ -133,20 +134,22 @@ FilamentEvolutionPlugin::make()
 
 ### Environment Variables (.env)
 
-Only API credentials should be in your `.env` file:
-
 ```env
 # Evolution API Connection (Required)
 EVOLUTION_URL=https://your-evolution-api.com
 EVOLUTION_API_KEY=your_api_key
 
-# Webhook URL (Required for receiving events)
-EVOLUTION_WEBHOOK_URL=https://your-app.com/api/evolution/webhook
-
-# Webhook Secret (Optional - for security)
+# Webhook Configuration (Required for receiving events)
+EVOLUTION_WEBHOOK_URL=https://your-app.com/api/webhooks/evolution
 EVOLUTION_WEBHOOK_SECRET=your_secret_key
+EVOLUTION_WEBHOOK_PATH=api/webhooks/evolution
 
-# Default Instance (Optional - for single instance setups)
+# Storage Options (Optional - defaults to true)
+EVOLUTION_STORE_WEBHOOKS=true
+EVOLUTION_STORE_MESSAGES=true
+
+# Instance Settings (Optional)
+EVOLUTION_QRCODE_EXPIRES=30
 EVOLUTION_DEFAULT_INSTANCE=your_instance_id
 ```
 
@@ -512,11 +515,13 @@ The plugin includes a webhook endpoint to receive events from Evolution API.
 
 ### Webhook URL
 
-Configure this URL in your Evolution API:
+Configure this URL in your Evolution API instance settings:
 
 ```
 https://your-app.com/api/webhooks/evolution
 ```
+
+> **Note:** The webhook route is `/api/webhooks/evolution` by default. Make sure your `EVOLUTION_WEBHOOK_URL` env variable matches this path.
 
 ---
 

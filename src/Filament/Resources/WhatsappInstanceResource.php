@@ -6,8 +6,13 @@ namespace WallaceMartinss\FilamentEvolution\Filament\Resources;
 
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
@@ -19,7 +24,11 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use WallaceMartinss\FilamentEvolution\Actions\SendWhatsappMessageAction;
 use WallaceMartinss\FilamentEvolution\Enums\StatusConnectionEnum;
 use WallaceMartinss\FilamentEvolution\Filament\Resources\WhatsappInstanceResource\Pages;
 use WallaceMartinss\FilamentEvolution\FilamentEvolutionPlugin;
@@ -28,6 +37,14 @@ use WallaceMartinss\FilamentEvolution\Models\WhatsappInstance;
 class WhatsappInstanceResource extends Resource
 {
     protected static ?string $model = WhatsappInstance::class;
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
 
     public static function getNavigationSort(): ?int
     {
@@ -194,6 +211,7 @@ class WhatsappInstanceResource extends Resource
             ->filters([
                 SelectFilter::make('status')
                     ->options(StatusConnectionEnum::class),
+                TrashedFilter::make(),
             ])
             ->recordActions([
                 Action::make('connect')
@@ -201,13 +219,28 @@ class WhatsappInstanceResource extends Resource
                     ->icon(Heroicon::QrCode)
                     ->color('success')
                     ->action(fn ($record, $livewire) => $livewire->openConnectModal((string) $record->id))
-                    ->hidden(fn ($record): bool => $record->status === StatusConnectionEnum::OPEN),
+                    ->hidden(fn ($record): bool => $record->status === StatusConnectionEnum::OPEN || $record->trashed()),
+                SendWhatsappMessageAction::make()
+                    ->instanceFrom('id')
+                    ->hideInstanceSelect()
+                    ->hidden(fn ($record): bool => $record->status !== StatusConnectionEnum::OPEN || $record->trashed()),
                 ViewAction::make(),
-                EditAction::make(),
+                EditAction::make()
+                    ->hidden(fn ($record): bool => $record->trashed()),
+                DeleteAction::make()
+                    ->hidden(fn ($record): bool => $record->trashed()),
+                RestoreAction::make(),
+                ForceDeleteAction::make()
+                    ->requiresConfirmation()
+                    ->modalDescription(__('filament-evolution::resource.actions.force_delete_confirmation')),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
+                    ForceDeleteBulkAction::make()
+                        ->requiresConfirmation()
+                        ->modalDescription(__('filament-evolution::resource.actions.force_delete_confirmation')),
                 ]),
             ]);
     }

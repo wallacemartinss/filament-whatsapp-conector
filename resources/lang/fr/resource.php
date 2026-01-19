@@ -43,6 +43,8 @@ return [
         'connect' => 'Connecter',
         'disconnect' => 'Déconnecter',
         'delete' => 'Supprimer',
+        'delete_confirmation' => 'Cette action déplacera l\'instance vers la corbeille. Vous pourrez la restaurer plus tard.',
+        'force_delete_confirmation' => 'Cette action supprimera DÉFINITIVEMENT l\'instance du système et de l\'API Evolution. Cette action ne peut pas être annulée.',
         'refresh' => 'Actualiser',
         'view_qrcode' => 'Voir le Code QR',
         'close' => 'Fermer',

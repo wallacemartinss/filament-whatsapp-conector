@@ -43,6 +43,8 @@ return [
         'connect' => '연결',
         'disconnect' => '연결 해제',
         'delete' => '삭제',
+        'delete_confirmation' => '이 작업은 인스턴스를 휴지통으로 이동합니다. 나중에 복원할 수 있습니다.',
+        'force_delete_confirmation' => '이 작업은 시스템과 Evolution API에서 인스턴스를 영구적으로 삭제합니다. 이 작업은 취소할 수 없습니다.',
         'refresh' => '새로고침',
         'view_qrcode' => 'QR 코드 보기',
         'close' => '닫기',
