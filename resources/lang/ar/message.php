@@ -15,7 +15,7 @@ return [
     ],
 
     'fields' => [
-        'instance' => 'المثيل',
+        'instance' => 'الحساب',
         'direction' => 'الاتجاه',
         'phone' => 'الهاتف',
         'type' => 'النوع',

@@ -84,7 +84,7 @@ class ViewWhatsappInstance extends ViewRecord
 
                             Notification::make()
                                 ->success()
-                                ->title('Instance created in Evolution API')
+                                ->title(__('filament-evolution::resource.messages.api_created'))
                                 ->send();
 
                             return;
@@ -128,14 +128,14 @@ class ViewWhatsappInstance extends ViewRecord
 
                                 Notification::make()
                                     ->success()
-                                    ->title('Instance created in Evolution API')
+                                    ->title(__('filament-evolution::resource.messages.api_created'))
                                     ->send();
 
                                 return;
                             } catch (EvolutionApiException $createError) {
                                 Notification::make()
                                     ->danger()
-                                    ->title('Failed to create instance')
+                                    ->title(__('filament-evolution::resource.messages.api_create_failed'))
                                     ->body($createError->getMessage())
                                     ->send();
 

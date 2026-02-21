@@ -14,7 +14,7 @@ return [
     ],
 
     'fields' => [
-        'instance' => 'المثيل',
+        'instance' => 'الحساب',
         'event' => 'الحدث',
         'processed' => 'تمت المعالجة',
         'has_error' => 'يوجد خطأ',
