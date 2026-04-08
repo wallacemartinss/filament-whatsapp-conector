@@ -45,13 +45,13 @@ class CreateWhatsappInstance extends CreateRecord
             Notification::make()
                 ->success()
                 ->title(__('filament-evolution::resource.messages.created'))
-                ->body('Instance created in Evolution API')
+                ->body(__('filament-evolution::resource.messages.api_created'))
                 ->send();
         } catch (EvolutionApiException $e) {
             Notification::make()
                 ->warning()
                 ->title(__('filament-evolution::resource.messages.created'))
-                ->body('Instance saved locally. API sync failed: '.$e->getMessage())
+                ->body(__('filament-evolution::resource.messages.api_sync_failed').' '.$e->getMessage())
                 ->send();
         }
     }
