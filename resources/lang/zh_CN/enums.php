@@ -19,6 +19,11 @@ return [
         'location' => '位置',
         'contact' => '联系人',
         'sticker' => '贴纸',
+        'buttons' => 'Buttons',
+        'list' => 'List',
+        'cta' => 'CTA',
+        'pix' => 'PIX',
+        'carousel' => 'Carousel',
     ],
 
     'message_direction' => [

@@ -72,6 +72,7 @@ class WhatsappInstance extends Model
         'count',
         'pairing_code',
         'qr_code',
+        'qr_code_updated_at',
     ];
 
     protected function casts(): array
@@ -84,6 +85,7 @@ class WhatsappInstance extends Model
             'read_messages' => 'boolean',
             'read_status' => 'boolean',
             'sync_full_history' => 'boolean',
+            'qr_code_updated_at' => 'datetime',
         ];
     }
 

@@ -14,6 +14,7 @@ A Filament v5 plugin for WhatsApp integration using [Evolution API v2](https://d
 - 📱 **QR Code Connection** - Real-time QR code display with countdown timer
 - 📨 **Webhook Support** - Receive events from Evolution API (messages, connection updates, etc.)
 - 💬 **Message Sending** - Send text, images, videos, audio, documents and more
+- 🧩 **Interactive Messages** - Reply Buttons, List, CTA, PIX and Carousel (Evolution API v2.4.0+)
 - 🎯 **Filament Action** - Ready-to-use action for sending messages from anywhere
 - 🔧 **Service Trait** - Easily integrate message sending into your own services
 - 🔐 **Secure** - Credentials stored in config/env, never in database
@@ -42,6 +43,7 @@ A Filament v5 plugin for WhatsApp integration using [Evolution API v2](https://d
 - Filament v5
 - Livewire v4
 - Evolution API v2 instance
+- Evolution API **v2.4.0+** is required for interactive messages (Buttons / List / CTA / PIX / Carousel). All other message types work on any v2 release.
 
 ---
 
@@ -397,6 +399,8 @@ Whatsapp::send($instanceId, '5511999999999', 'text', 'Hello World!');
 Whatsapp::send($instanceId, '5511999999999', 'image', 'path/to/image.jpg', ['caption' => 'Nice!']);
 ```
 
+> 🧩 **Interactive messages** (Buttons / List / CTA / PIX / Carousel) require Evolution API **v2.4.0+**. See the [Interactive Messages](#4-interactive-messages-buttons--list--cta--pix--carousel) section below.
+
 ---
 
 ### 3. Using the Trait in Your Services
@@ -450,6 +454,11 @@ class InvoiceService
 | `sendWhatsappDocument($number, $path, $fileName, $caption)` | Send document |
 | `sendWhatsappLocation($number, $lat, $lng, $name, $address)` | Send location |
 | `sendWhatsappContact($number, $contactName, $contactNumber)` | Send contact card |
+| `sendWhatsappButtons($number, $description, $buttons, $title, $footer)` | Send reply / mixed buttons (v2.4.0+) |
+| `sendWhatsappCta($number, $description, $buttons, $title, $footer)` | Send up to 2 CTA buttons (v2.4.0+) |
+| `sendWhatsappPix($number, $description, $pix, $title, $footer)` | Send isolated PIX button (v2.4.0+) |
+| `sendWhatsappList($number, $title, $description, $buttonText, $sections, $footerText)` | Send list message (v2.4.0+) |
+| `sendWhatsappCarousel($number, $message, $cards)` | Send product carousel (v2.4.0+) |
 | `sendWhatsappMessage($number, $type, $content, $options)` | Generic send method |
 | `hasWhatsappInstance()` | Check if an instance is available |
 | `getConnectedWhatsappInstances()` | Get all connected instances |
@@ -469,6 +478,200 @@ class TenantInvoiceService
         return auth()->user()->tenant->whatsapp_instance_id;
     }
 }
+```
+
+---
+
+### 4. Interactive Messages (Buttons / List / CTA / PIX / Carousel)
+
+> ⚠️ **Requires Evolution API v2.4.0 or later.** Older API versions will reject these endpoints.
+
+The plugin exposes five interactive message types via the `Whatsapp` facade, the `CanSendWhatsappMessage` trait, and the `SendWhatsappMessageAction` (which renders the correct form fields for each type automatically).
+
+| Type | Endpoint | Constraints |
+|------|----------|-------------|
+| `BUTTONS` (Reply) | `POST /message/sendButtons` | Max 3 reply buttons. Cannot be mixed with PIX. |
+| `CTA` | `POST /message/sendButtons` | Max 2 buttons (`url` / `call` / `copy`). Cannot be mixed with reply or PIX. |
+| `PIX` | `POST /message/sendButtons` | Exactly 1 `payment_info` button. Must be isolated. |
+| `LIST` | `POST /message/sendList` | Uses legacy `listMessage` with `SINGLE_SELECT` (renders on WhatsApp Web/Desktop). |
+| `CAROUSEL` | `POST /message/sendCarousel` | Multi-card. Single-card-without-image falls back to `nativeFlowMessage` for iOS. |
+
+#### Reply Buttons
+
+```php
+use WallaceMartinss\FilamentEvolution\Facades\Whatsapp;
+
+Whatsapp::sendButtons(
+    instanceId: $instanceId,
+    number: '5511999999999',
+    description: 'Would you like to confirm your appointment?',
+    buttons: [
+        ['type' => 'reply', 'displayText' => 'Yes',     'id' => 'confirm-yes'],
+        ['type' => 'reply', 'displayText' => 'No',      'id' => 'confirm-no'],
+        ['type' => 'reply', 'displayText' => 'Reschedule', 'id' => 'reschedule'],
+    ],
+    title: 'Appointment Confirmation',
+    footer: 'Reply within 24h',
+);
+```
+
+#### CTA Buttons (URL / Call / Copy)
+
+```php
+Whatsapp::sendCta(
+    instanceId: $instanceId,
+    number: '5511999999999',
+    description: 'Tap below to visit our site or call us.',
+    buttons: [
+        ['type' => 'url',  'displayText' => 'Visit Site', 'url' => 'https://example.com'],
+        ['type' => 'call', 'displayText' => 'Call Us',    'phoneNumber' => '+5511888888888'],
+        // Also supported: ['type' => 'copy', 'displayText' => 'Copy Code', 'copyCode' => 'PROMO10']
+    ],
+);
+```
+
+#### PIX Button
+
+```php
+Whatsapp::sendPix(
+    instanceId: $instanceId,
+    number: '5511999999999',
+    description: 'Pay your invoice with PIX',
+    pix: [
+        'currency' => 'BRL',
+        'name'     => 'ACME LTDA',
+        'keyType'  => 'phone',  // phone | email | cpf | cnpj | random
+        'key'      => '5511888888888',
+        'amount'   => 199.90,   // optional — omit to let the recipient type the value
+    ],
+    title: 'Invoice #12345',
+    footer: 'Due today',
+);
+```
+
+#### List Message
+
+```php
+Whatsapp::sendList(
+    instanceId: $instanceId,
+    number: '5511999999999',
+    title: 'Main Menu',
+    description: 'Pick an option to continue',
+    buttonText: 'View options',
+    sections: [
+        [
+            'title' => 'Support',
+            'rows' => [
+                ['title' => 'Track order',  'description' => 'Check delivery status', 'rowId' => 'track'],
+                ['title' => 'Open ticket',  'description' => 'Talk to a human',       'rowId' => 'ticket'],
+            ],
+        ],
+        [
+            'title' => 'Sales',
+            'rows' => [
+                ['title' => 'Catalog',      'rowId' => 'catalog'],
+                ['title' => 'Promotions',   'rowId' => 'promo'],
+            ],
+        ],
+    ],
+    footerText: 'We reply 24/7',
+);
+```
+
+#### Carousel
+
+```php
+Whatsapp::sendCarousel(
+    instanceId: $instanceId,
+    number: '5511999999999',
+    message: 'Check out our top picks 🛍️',
+    cards: [
+        [
+            'imageUrl' => 'https://cdn.example.com/product-a.jpg',
+            'header'   => 'Product A',
+            'body'     => 'Limited edition • R$ 199',
+            'buttons'  => [
+                ['type' => 'reply', 'displayText' => 'Buy now', 'id' => 'buy-a'],
+                ['type' => 'url',   'displayText' => 'Details', 'url' => 'https://example.com/a'],
+            ],
+        ],
+        [
+            'imageUrl' => 'https://cdn.example.com/product-b.jpg',
+            'header'   => 'Product B',
+            'body'     => 'Best seller • R$ 299',
+            'buttons'  => [
+                ['type' => 'reply', 'displayText' => 'Buy now', 'id' => 'buy-b'],
+            ],
+        ],
+    ],
+);
+```
+
+#### Using the Trait
+
+```php
+use WallaceMartinss\FilamentEvolution\Concerns\CanSendWhatsappMessage;
+
+class CheckoutService
+{
+    use CanSendWhatsappMessage;
+
+    public function sendPaymentOptions(Order $order): void
+    {
+        $this->sendWhatsappPix(
+            number: $order->customer->phone,
+            description: "Order #{$order->number} — R$ {$order->total}",
+            pix: [
+                'currency' => 'BRL',
+                'name'     => config('app.name'),
+                'keyType'  => 'random',
+                'key'      => $order->pix_key,
+            ],
+            title: 'Complete your purchase',
+        );
+    }
+}
+```
+
+#### Generic `send()` Helper
+
+```php
+Whatsapp::send($instanceId, '5511999999999', 'buttons', [
+    'description' => 'Choose:',
+    'title'       => 'Menu',
+    'footer'      => null,
+    'buttons'     => [
+        ['type' => 'reply', 'displayText' => 'A', 'id' => 'a'],
+        ['type' => 'reply', 'displayText' => 'B', 'id' => 'b'],
+    ],
+]);
+
+Whatsapp::send($instanceId, '5511999999999', 'list', [
+    'title'       => 'Menu',
+    'description' => 'Pick one',
+    'buttonText'  => 'Open',
+    'sections'    => [/* ... */],
+]);
+
+Whatsapp::send($instanceId, '5511999999999', 'carousel', [
+    'message' => 'Our products',
+    'cards'   => [/* ... */],
+]);
+```
+
+#### Filament Action UI
+
+The bundled `SendWhatsappMessageAction` automatically renders the right form fields per interactive type (repeater for reply buttons capped at 3, CTA capped at 2, PIX block with key type + receiver, list with nested sections/rows repeaters, and per-card carousel repeater with its own button list). Just add it to your panel — no extra configuration required.
+
+```php
+SendWhatsappMessageAction::make()
+    ->allowedTypes([
+        MessageTypeEnum::BUTTONS,
+        MessageTypeEnum::CTA,
+        MessageTypeEnum::PIX,
+        MessageTypeEnum::LIST,
+        MessageTypeEnum::CAROUSEL,
+    ]);
 ```
 
 ---

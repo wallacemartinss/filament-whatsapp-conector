@@ -19,6 +19,11 @@ return [
         'location' => '위치',
         'contact' => '연락처',
         'sticker' => '스티커',
+        'buttons' => 'Buttons',
+        'list' => 'List',
+        'cta' => 'CTA',
+        'pix' => 'PIX',
+        'carousel' => 'Carousel',
     ],
 
     'message_direction' => [

@@ -34,6 +34,7 @@ return new class extends Migration
             $table->string('count')->nullable();
             $table->string('pairing_code')->nullable();
             $table->longText('qr_code')->nullable();
+            $table->timestamp('qr_code_updated_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

@@ -200,6 +200,161 @@ trait CanSendWhatsappMessage
     }
 
     /**
+     * Send interactive reply / mixed buttons via WhatsApp.
+     *
+     * @throws EvolutionApiException
+     */
+    protected function sendWhatsappButtons(
+        string $number,
+        string $description,
+        array $buttons,
+        ?string $title = null,
+        ?string $footer = null,
+        ?string $instanceId = null,
+        array $options = []
+    ): array {
+        $instanceId = $instanceId ?? $this->getWhatsappInstanceId();
+
+        if (! $instanceId) {
+            throw new EvolutionApiException('No WhatsApp instance available for sending messages.');
+        }
+
+        return $this->whatsappService()->sendButtons(
+            $instanceId,
+            $number,
+            $description,
+            $buttons,
+            $title,
+            $footer,
+            $options
+        );
+    }
+
+    /**
+     * Send up to 2 CTA buttons (url / call / copy) via WhatsApp.
+     *
+     * @throws EvolutionApiException
+     */
+    protected function sendWhatsappCta(
+        string $number,
+        string $description,
+        array $buttons,
+        ?string $title = null,
+        ?string $footer = null,
+        ?string $instanceId = null,
+        array $options = []
+    ): array {
+        $instanceId = $instanceId ?? $this->getWhatsappInstanceId();
+
+        if (! $instanceId) {
+            throw new EvolutionApiException('No WhatsApp instance available for sending messages.');
+        }
+
+        return $this->whatsappService()->sendCta(
+            $instanceId,
+            $number,
+            $description,
+            $buttons,
+            $title,
+            $footer,
+            $options
+        );
+    }
+
+    /**
+     * Send an isolated PIX (payment_info) button via WhatsApp.
+     *
+     * @param  array  $pix  e.g. ['currency' => 'BRL', 'name' => 'Receiver', 'keyType' => 'phone', 'key' => '5511...']
+     *
+     * @throws EvolutionApiException
+     */
+    protected function sendWhatsappPix(
+        string $number,
+        string $description,
+        array $pix,
+        ?string $title = null,
+        ?string $footer = null,
+        ?string $instanceId = null,
+        array $options = []
+    ): array {
+        $instanceId = $instanceId ?? $this->getWhatsappInstanceId();
+
+        if (! $instanceId) {
+            throw new EvolutionApiException('No WhatsApp instance available for sending messages.');
+        }
+
+        return $this->whatsappService()->sendPix(
+            $instanceId,
+            $number,
+            $description,
+            $pix,
+            $title,
+            $footer,
+            $options
+        );
+    }
+
+    /**
+     * Send a list message via WhatsApp.
+     *
+     * @throws EvolutionApiException
+     */
+    protected function sendWhatsappList(
+        string $number,
+        string $title,
+        string $description,
+        string $buttonText,
+        array $sections,
+        ?string $footerText = null,
+        ?string $instanceId = null,
+        array $options = []
+    ): array {
+        $instanceId = $instanceId ?? $this->getWhatsappInstanceId();
+
+        if (! $instanceId) {
+            throw new EvolutionApiException('No WhatsApp instance available for sending messages.');
+        }
+
+        return $this->whatsappService()->sendList(
+            $instanceId,
+            $number,
+            $title,
+            $description,
+            $buttonText,
+            $sections,
+            $footerText,
+            $options
+        );
+    }
+
+    /**
+     * Send a product carousel via WhatsApp.
+     *
+     * @throws EvolutionApiException
+     */
+    protected function sendWhatsappCarousel(
+        string $number,
+        string $message,
+        array $cards,
+        ?string $instanceId = null,
+        array $options = []
+    ): array {
+        $instanceId = $instanceId ?? $this->getWhatsappInstanceId();
+
+        if (! $instanceId) {
+            throw new EvolutionApiException('No WhatsApp instance available for sending messages.');
+        }
+
+        return $this->whatsappService()->sendCarousel(
+            $instanceId,
+            $number,
+            $message,
+            $cards,
+            $options
+        );
+    }
+
+    /**
      * Generic method to send any type of WhatsApp message.
      *
      * @param  string|array  $content  Message content

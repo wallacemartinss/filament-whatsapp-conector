@@ -248,9 +248,124 @@ class WhatsappService
     }
 
     /**
+     * Send an interactive button message (reply / mixed).
+     *
+     * See EvolutionClient::sendButtons() for button shape constraints.
+     *
+     * @throws EvolutionApiException
+     */
+    public function sendButtons(
+        string|int $instanceId,
+        string $number,
+        string $description,
+        array $buttons,
+        ?string $title = null,
+        ?string $footer = null,
+        array $options = []
+    ): array {
+        $instance = $this->resolveInstance($instanceId);
+        $number = $this->formatNumber($number);
+
+        return $this->client->sendButtons(
+            $instance->name,
+            $number,
+            $description,
+            $buttons,
+            $title,
+            $footer,
+            $options
+        );
+    }
+
+    /**
+     * Send up to 2 CTA buttons (url / call / copy). Cannot be mixed with reply or PIX buttons.
+     *
+     * @throws EvolutionApiException
+     */
+    public function sendCta(
+        string|int $instanceId,
+        string $number,
+        string $description,
+        array $buttons,
+        ?string $title = null,
+        ?string $footer = null,
+        array $options = []
+    ): array {
+        return $this->sendButtons($instanceId, $number, $description, $buttons, $title, $footer, $options);
+    }
+
+    /**
+     * Send a single PIX (payment_info) button. Must be isolated — exactly 1 button, no mixing.
+     *
+     * @throws EvolutionApiException
+     */
+    public function sendPix(
+        string|int $instanceId,
+        string $number,
+        string $description,
+        array $pix,
+        ?string $title = null,
+        ?string $footer = null,
+        array $options = []
+    ): array {
+        $button = array_merge(['type' => 'pix'], $pix);
+
+        return $this->sendButtons($instanceId, $number, $description, [$button], $title, $footer, $options);
+    }
+
+    /**
+     * Send a list message (legacy listMessage / SINGLE_SELECT).
+     *
+     * @throws EvolutionApiException
+     */
+    public function sendList(
+        string|int $instanceId,
+        string $number,
+        string $title,
+        string $description,
+        string $buttonText,
+        array $sections,
+        ?string $footerText = null,
+        array $options = []
+    ): array {
+        $instance = $this->resolveInstance($instanceId);
+        $number = $this->formatNumber($number);
+
+        return $this->client->sendList(
+            $instance->name,
+            $number,
+            $title,
+            $description,
+            $buttonText,
+            $sections,
+            $footerText,
+            $options
+        );
+    }
+
+    /**
+     * Send a product carousel (multi-card).
+     *
+     * @throws EvolutionApiException
+     */
+    public function sendCarousel(
+        string|int $instanceId,
+        string $number,
+        string $message,
+        array $cards,
+        array $options = []
+    ): array {
+        $instance = $this->resolveInstance($instanceId);
+        $number = $this->formatNumber($number);
+
+        return $this->client->sendCarousel($instance->name, $number, $message, $cards, $options);
+    }
+
+    /**
      * Generic send method that routes to the appropriate type.
      *
-     * @param  string|array  $content  The message content (text string, file path, or array for location/contact)
+     * @param  string|array  $content  The message content (text string, file path, or array for
+     *                                 location/contact/buttons/list/carousel/pix)
      *
      * @throws EvolutionApiException
      */
@@ -306,6 +421,41 @@ class WhatsappService
                 $number,
                 $content['name'],
                 $content['number']
+            ),
+            MessageTypeEnum::BUTTONS, MessageTypeEnum::CTA => $this->sendButtons(
+                $instanceId,
+                $number,
+                $content['description'] ?? '',
+                $content['buttons'] ?? [],
+                $content['title'] ?? null,
+                $content['footer'] ?? null,
+                $options
+            ),
+            MessageTypeEnum::PIX => $this->sendPix(
+                $instanceId,
+                $number,
+                $content['description'] ?? '',
+                $content['pix'] ?? $content,
+                $content['title'] ?? null,
+                $content['footer'] ?? null,
+                $options
+            ),
+            MessageTypeEnum::LIST => $this->sendList(
+                $instanceId,
+                $number,
+                $content['title'] ?? '',
+                $content['description'] ?? '',
+                $content['buttonText'] ?? '',
+                $content['sections'] ?? [],
+                $content['footerText'] ?? null,
+                $options
+            ),
+            MessageTypeEnum::CAROUSEL => $this->sendCarousel(
+                $instanceId,
+                $number,
+                $content['message'] ?? '',
+                $content['cards'] ?? [],
+                $options
             ),
             default => throw new EvolutionApiException("Unsupported message type: {$type->value}"),
         };
