@@ -19,6 +19,11 @@ return [
         'location' => 'موقع',
         'contact' => 'جهة اتصال',
         'sticker' => 'ملصق',
+        'buttons' => 'Buttons',
+        'list' => 'List',
+        'cta' => 'CTA',
+        'pix' => 'PIX',
+        'carousel' => 'Carousel',
     ],
 
     'message_direction' => [

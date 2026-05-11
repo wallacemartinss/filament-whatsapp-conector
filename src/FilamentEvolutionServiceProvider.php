@@ -26,6 +26,7 @@ class FilamentEvolutionServiceProvider extends PackageServiceProvider
                 'create_whatsapp_instances_table',
                 'create_whatsapp_messages_table',
                 'create_whatsapp_webhooks_table',
+                'add_qr_code_updated_at_to_whatsapp_instances_table',
             ])
             ->hasViews()
             ->hasTranslations()

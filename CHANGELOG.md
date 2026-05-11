@@ -5,6 +5,30 @@ All notable changes to Filament Evolution will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-05-11
+
+> Requires Evolution API **v2.4.0+** for the new interactive message types. All previous message types continue to work on any v2 release.
+
+### Added
+
+- **Interactive messages**: `sendButtons`, `sendCta`, `sendPix`, `sendList`, `sendCarousel` on the `Whatsapp` facade, `WhatsappService` and the `CanSendWhatsappMessage` trait.
+- **New `MessageTypeEnum` cases**: `BUTTONS`, `LIST`, `CTA`, `PIX`, `CAROUSEL` (with `isInteractive()` helper).
+- **`SendWhatsappMessageAction` form coverage** for all interactive types — reply buttons (max 3), CTA (max 2, url/call/copy), PIX with optional `amount`, list with nested sections + rows, and carousel with per-card buttons.
+- **Translations** for the new keys across all 15 locales (en + pt_BR fully translated; remaining locales mirrored from English).
+
+### Fixed
+
+- **`qr_code_updated_at` column**: the package was writing to this column from `QrCodeDisplay` and `ProcessWebhookJob` but the migration never created it, causing `SQLSTATE[42S22] Unknown column 'qr_code_updated_at'` on strict MySQL setups. Migration stub now includes the column for fresh installs, and an upgrade migration (`add_qr_code_updated_at_to_whatsapp_instances_table`) ships for existing installs. `WhatsappInstance` model now declares the column as `fillable` and casts it to `datetime`.
+
+### Upgrading from 1.0.x
+
+```bash
+php artisan vendor:publish --tag="filament-evolution-migrations"
+php artisan migrate
+```
+
+The new upgrade migration is idempotent (checks `Schema::hasColumn` before adding/removing), so it is safe to run regardless of whether the column was patched manually.
+
 ## [1.0.0] - 2025-01-06
 
 ### 🎉 Initial Release

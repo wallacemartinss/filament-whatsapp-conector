@@ -400,6 +400,119 @@ class EvolutionClient
     }
 
     /**
+     * Send an interactive button message (reply / CTA / PIX / copy / call).
+     *
+     * Build $buttons as an array of mixed entries, e.g.:
+     *   ['type' => 'reply',         'displayText' => 'Yes', 'id' => 'yes']
+     *   ['type' => 'url',           'displayText' => 'Visit', 'url' => 'https://...']
+     *   ['type' => 'call',          'displayText' => 'Call', 'phoneNumber' => '+55...']
+     *   ['type' => 'copy',          'displayText' => 'Copy', 'copyCode' => 'CODE123']
+     *   ['type' => 'pix', 'currency' => 'BRL', 'name' => 'Receiver',
+     *    'keyType' => 'phone', 'key' => '5511...']
+     *
+     * Evolution API constraints (enforced server-side, mirrored here for clarity):
+     *  - Max 2 CTA (url/call/copy) buttons, cannot be mixed with reply or PIX.
+     *  - Exactly 1 PIX button when used (isolated, no other types).
+     *
+     * @throws EvolutionApiException
+     */
+    public function sendButtons(
+        string $instanceName,
+        string $number,
+        string $description,
+        array $buttons,
+        ?string $title = null,
+        ?string $footer = null,
+        array $options = []
+    ): array {
+        $data = array_merge([
+            'number' => $number,
+            'description' => $description,
+            'buttons' => array_values($buttons),
+        ], $options);
+
+        if ($title !== null && $title !== '') {
+            $data['title'] = $title;
+        }
+
+        if ($footer !== null && $footer !== '') {
+            $data['footer'] = $footer;
+        }
+
+        return $this->request('POST', "/message/sendButtons/{$instanceName}", $data);
+    }
+
+    /**
+     * Send a list message (legacy listMessage / SINGLE_SELECT).
+     *
+     * $sections is an array of section definitions, e.g.:
+     *   [
+     *     'title' => 'Section 1',
+     *     'rows' => [
+     *       ['title' => 'Row title', 'description' => 'Optional', 'rowId' => 'row-1'],
+     *     ],
+     *   ]
+     *
+     * @throws EvolutionApiException
+     */
+    public function sendList(
+        string $instanceName,
+        string $number,
+        string $title,
+        string $description,
+        string $buttonText,
+        array $sections,
+        ?string $footerText = null,
+        array $options = []
+    ): array {
+        $data = array_merge([
+            'number' => $number,
+            'title' => $title,
+            'description' => $description,
+            'buttonText' => $buttonText,
+            'sections' => array_values($sections),
+        ], $options);
+
+        if ($footerText !== null && $footerText !== '') {
+            $data['footerText'] = $footerText;
+        }
+
+        return $this->request('POST', "/message/sendList/{$instanceName}", $data);
+    }
+
+    /**
+     * Send a product carousel (multi-card).
+     *
+     * $cards is an array of card definitions, e.g.:
+     *   [
+     *     'imageUrl' => 'https://...',     // optional; single-card-without-image falls back to nativeFlow
+     *     'header'   => 'Card title',
+     *     'body'     => 'Card body',
+     *     'footer'   => 'Optional footer',
+     *     'buttons'  => [
+     *         ['type' => 'reply', 'displayText' => 'Buy', 'id' => 'buy-1'],
+     *     ],
+     *   ]
+     *
+     * @throws EvolutionApiException
+     */
+    public function sendCarousel(
+        string $instanceName,
+        string $number,
+        string $message,
+        array $cards,
+        array $options = []
+    ): array {
+        $data = array_merge([
+            'number' => $number,
+            'message' => $message,
+            'cards' => array_values($cards),
+        ], $options);
+
+        return $this->request('POST', "/message/sendCarousel/{$instanceName}", $data);
+    }
+
+    /**
      * Set webhook for an instance.
      *
      * @throws EvolutionApiException

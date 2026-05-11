@@ -19,6 +19,11 @@ return [
         'location' => 'Місцезнаходження',
         'contact' => 'Контакт',
         'sticker' => 'Стікер',
+        'buttons' => 'Buttons',
+        'list' => 'List',
+        'cta' => 'CTA',
+        'pix' => 'PIX',
+        'carousel' => 'Carousel',
     ],
 
     'message_direction' => [

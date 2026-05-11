@@ -19,6 +19,11 @@ return [
         'location' => 'Localização',
         'contact' => 'Contato',
         'sticker' => 'Figurinha',
+        'buttons' => 'Botões',
+        'list' => 'Lista',
+        'cta' => 'CTA',
+        'pix' => 'PIX',
+        'carousel' => 'Carrossel',
     ],
 
     'message_direction' => [

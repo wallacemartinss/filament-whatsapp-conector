@@ -7,11 +7,13 @@ namespace WallaceMartinss\FilamentEvolution\Actions;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Icons\Heroicon;
 use WallaceMartinss\FilamentEvolution\Enums\MessageTypeEnum;
@@ -253,7 +255,250 @@ class SendWhatsappMessageAction extends Action
                     $this->getContactNumberInput(),
                 ])
                 ->visible(fn (Get $get): bool => $get('type') === MessageTypeEnum::CONTACT->value),
+
+            // Interactive: Buttons / CTA / PIX share description+title+footer
+            Section::make(__('filament-evolution::action.interactive_section'))
+                ->schema([
+                    $this->getInteractiveDescriptionInput(),
+                    Grid::make(2)->schema([
+                        $this->getInteractiveTitleInput(),
+                        $this->getInteractiveFooterInput(),
+                    ]),
+                ])
+                ->visible(fn (Get $get): bool => in_array($get('type'), [
+                    MessageTypeEnum::BUTTONS->value,
+                    MessageTypeEnum::CTA->value,
+                    MessageTypeEnum::PIX->value,
+                ], true))
+                ->columnSpanFull(),
+
+            $this->getReplyButtonsRepeater(),
+            $this->getCtaButtonsRepeater(),
+
+            // PIX (single payment button)
+            Section::make(__('filament-evolution::action.pix_section'))
+                ->schema([
+                    Grid::make(2)->schema([
+                        Select::make('pix_key_type')
+                            ->label(__('filament-evolution::action.pix_key_type'))
+                            ->options([
+                                'phone' => 'Telefone',
+                                'email' => 'Email',
+                                'cpf' => 'CPF',
+                                'cnpj' => 'CNPJ',
+                                'random' => __('filament-evolution::action.pix_key_random'),
+                            ])
+                            ->default('phone')
+                            ->required(fn (Get $get): bool => $get('type') === MessageTypeEnum::PIX->value),
+                        TextInput::make('pix_key')
+                            ->label(__('filament-evolution::action.pix_key'))
+                            ->required(fn (Get $get): bool => $get('type') === MessageTypeEnum::PIX->value),
+                    ]),
+                    Grid::make(2)->schema([
+                        TextInput::make('pix_name')
+                            ->label(__('filament-evolution::action.pix_name'))
+                            ->required(fn (Get $get): bool => $get('type') === MessageTypeEnum::PIX->value),
+                        TextInput::make('pix_currency')
+                            ->label(__('filament-evolution::action.pix_currency'))
+                            ->default('BRL'),
+                    ]),
+                    TextInput::make('pix_amount')
+                        ->label(__('filament-evolution::action.pix_amount'))
+                        ->helperText(__('filament-evolution::action.pix_amount_helper'))
+                        ->numeric()
+                        ->minValue(0)
+                        ->step(0.01)
+                        ->placeholder('100.50'),
+                ])
+                ->visible(fn (Get $get): bool => $get('type') === MessageTypeEnum::PIX->value)
+                ->columnSpanFull(),
+
+            // List
+            Section::make(__('filament-evolution::action.list_section'))
+                ->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('list_title')
+                            ->label(__('filament-evolution::action.list_title'))
+                            ->required(fn (Get $get): bool => $get('type') === MessageTypeEnum::LIST->value),
+                        TextInput::make('list_button_text')
+                            ->label(__('filament-evolution::action.list_button_text'))
+                            ->required(fn (Get $get): bool => $get('type') === MessageTypeEnum::LIST->value)
+                            ->placeholder(__('filament-evolution::action.list_button_text_placeholder')),
+                    ]),
+                    Textarea::make('list_description')
+                        ->label(__('filament-evolution::action.list_description'))
+                        ->required(fn (Get $get): bool => $get('type') === MessageTypeEnum::LIST->value)
+                        ->rows(2),
+                    TextInput::make('list_footer')
+                        ->label(__('filament-evolution::action.list_footer')),
+                    Repeater::make('list_sections')
+                        ->label(__('filament-evolution::action.list_sections'))
+                        ->schema([
+                            TextInput::make('title')
+                                ->label(__('filament-evolution::action.list_section_title'))
+                                ->required(),
+                            Repeater::make('rows')
+                                ->label(__('filament-evolution::action.list_section_rows'))
+                                ->schema([
+                                    Grid::make(2)->schema([
+                                        TextInput::make('title')
+                                            ->label(__('filament-evolution::action.list_row_title'))
+                                            ->required(),
+                                        TextInput::make('rowId')
+                                            ->label(__('filament-evolution::action.list_row_id'))
+                                            ->required(),
+                                    ]),
+                                    TextInput::make('description')
+                                        ->label(__('filament-evolution::action.list_row_description')),
+                                ])
+                                ->minItems(1)
+                                ->defaultItems(1)
+                                ->reorderable(),
+                        ])
+                        ->minItems(1)
+                        ->defaultItems(1)
+                        ->required(fn (Get $get): bool => $get('type') === MessageTypeEnum::LIST->value),
+                ])
+                ->visible(fn (Get $get): bool => $get('type') === MessageTypeEnum::LIST->value)
+                ->columnSpanFull(),
+
+            // Carousel
+            Section::make(__('filament-evolution::action.carousel_section'))
+                ->schema([
+                    Textarea::make('carousel_message')
+                        ->label(__('filament-evolution::action.carousel_message'))
+                        ->required(fn (Get $get): bool => $get('type') === MessageTypeEnum::CAROUSEL->value)
+                        ->rows(2),
+                    Repeater::make('carousel_cards')
+                        ->label(__('filament-evolution::action.carousel_cards'))
+                        ->schema([
+                            TextInput::make('imageUrl')
+                                ->label(__('filament-evolution::action.carousel_image_url'))
+                                ->url()
+                                ->helperText(__('filament-evolution::action.carousel_image_helper')),
+                            Grid::make(2)->schema([
+                                TextInput::make('header')
+                                    ->label(__('filament-evolution::action.carousel_header')),
+                                TextInput::make('footer')
+                                    ->label(__('filament-evolution::action.carousel_footer')),
+                            ]),
+                            Textarea::make('body')
+                                ->label(__('filament-evolution::action.carousel_body'))
+                                ->rows(2),
+                            Repeater::make('buttons')
+                                ->label(__('filament-evolution::action.carousel_buttons'))
+                                ->schema([
+                                    Grid::make(3)->schema([
+                                        Select::make('type')
+                                            ->label(__('filament-evolution::action.button_type'))
+                                            ->options([
+                                                'reply' => __('filament-evolution::action.button_type_reply'),
+                                                'url' => __('filament-evolution::action.button_type_url'),
+                                                'call' => __('filament-evolution::action.button_type_call'),
+                                                'copy' => __('filament-evolution::action.button_type_copy'),
+                                            ])
+                                            ->default('reply')
+                                            ->required()
+                                            ->live(),
+                                        TextInput::make('displayText')
+                                            ->label(__('filament-evolution::action.button_text'))
+                                            ->required(),
+                                        TextInput::make('value')
+                                            ->label(__('filament-evolution::action.button_value'))
+                                            ->helperText(__('filament-evolution::action.button_value_helper')),
+                                    ]),
+                                ])
+                                ->defaultItems(0)
+                                ->reorderable(),
+                        ])
+                        ->minItems(1)
+                        ->defaultItems(1)
+                        ->reorderable()
+                        ->required(fn (Get $get): bool => $get('type') === MessageTypeEnum::CAROUSEL->value),
+                ])
+                ->visible(fn (Get $get): bool => $get('type') === MessageTypeEnum::CAROUSEL->value)
+                ->columnSpanFull(),
         ];
+    }
+
+    protected function getInteractiveDescriptionInput(): Textarea
+    {
+        return Textarea::make('interactive_description')
+            ->label(__('filament-evolution::action.interactive_description'))
+            ->required(fn (Get $get): bool => in_array($get('type'), [
+                MessageTypeEnum::BUTTONS->value,
+                MessageTypeEnum::CTA->value,
+                MessageTypeEnum::PIX->value,
+            ], true))
+            ->rows(3)
+            ->columnSpanFull();
+    }
+
+    protected function getInteractiveTitleInput(): TextInput
+    {
+        return TextInput::make('interactive_title')
+            ->label(__('filament-evolution::action.interactive_title'));
+    }
+
+    protected function getInteractiveFooterInput(): TextInput
+    {
+        return TextInput::make('interactive_footer')
+            ->label(__('filament-evolution::action.interactive_footer'));
+    }
+
+    protected function getReplyButtonsRepeater(): Repeater
+    {
+        return Repeater::make('reply_buttons')
+            ->label(__('filament-evolution::action.reply_buttons'))
+            ->schema([
+                Grid::make(2)->schema([
+                    TextInput::make('displayText')
+                        ->label(__('filament-evolution::action.button_text'))
+                        ->required(),
+                    TextInput::make('id')
+                        ->label(__('filament-evolution::action.button_id'))
+                        ->required(),
+                ]),
+            ])
+            ->minItems(1)
+            ->maxItems(3)
+            ->defaultItems(1)
+            ->reorderable()
+            ->columnSpanFull()
+            ->visible(fn (Get $get): bool => $get('type') === MessageTypeEnum::BUTTONS->value);
+    }
+
+    protected function getCtaButtonsRepeater(): Repeater
+    {
+        return Repeater::make('cta_buttons')
+            ->label(__('filament-evolution::action.cta_buttons'))
+            ->helperText(__('filament-evolution::action.cta_buttons_helper'))
+            ->schema([
+                Grid::make(3)->schema([
+                    Select::make('type')
+                        ->label(__('filament-evolution::action.button_type'))
+                        ->options([
+                            'url' => __('filament-evolution::action.button_type_url'),
+                            'call' => __('filament-evolution::action.button_type_call'),
+                            'copy' => __('filament-evolution::action.button_type_copy'),
+                        ])
+                        ->default('url')
+                        ->required(),
+                    TextInput::make('displayText')
+                        ->label(__('filament-evolution::action.button_text'))
+                        ->required(),
+                    TextInput::make('value')
+                        ->label(__('filament-evolution::action.button_value'))
+                        ->helperText(__('filament-evolution::action.button_value_helper'))
+                        ->required(),
+                ]),
+            ])
+            ->minItems(1)
+            ->maxItems(2)
+            ->defaultItems(1)
+            ->reorderable()
+            ->columnSpanFull()
+            ->visible(fn (Get $get): bool => $get('type') === MessageTypeEnum::CTA->value);
     }
 
     protected function getInstanceSelect(): Select
@@ -332,6 +577,11 @@ class SendWhatsappMessageAction extends Action
             MessageTypeEnum::DOCUMENT,
             MessageTypeEnum::LOCATION,
             MessageTypeEnum::CONTACT,
+            MessageTypeEnum::BUTTONS,
+            MessageTypeEnum::LIST,
+            MessageTypeEnum::CTA,
+            MessageTypeEnum::PIX,
+            MessageTypeEnum::CAROUSEL,
         ];
 
         $types = ! empty($this->allowedTypes) ? $this->allowedTypes : $allTypes;
@@ -513,6 +763,53 @@ class SendWhatsappMessageAction extends Action
                     $data['contact_name'],
                     $data['contact_number']
                 ),
+                MessageTypeEnum::BUTTONS => $service->sendButtons(
+                    $instanceId,
+                    $number,
+                    $data['interactive_description'] ?? '',
+                    $this->buildReplyButtons($data['reply_buttons'] ?? []),
+                    $data['interactive_title'] ?? null,
+                    $data['interactive_footer'] ?? null,
+                ),
+                MessageTypeEnum::CTA => $service->sendCta(
+                    $instanceId,
+                    $number,
+                    $data['interactive_description'] ?? '',
+                    $this->buildCtaButtons($data['cta_buttons'] ?? []),
+                    $data['interactive_title'] ?? null,
+                    $data['interactive_footer'] ?? null,
+                ),
+                MessageTypeEnum::PIX => $service->sendPix(
+                    $instanceId,
+                    $number,
+                    $data['interactive_description'] ?? '',
+                    array_filter([
+                        'currency' => $data['pix_currency'] ?? 'BRL',
+                        'name' => $data['pix_name'] ?? '',
+                        'keyType' => $data['pix_key_type'] ?? 'phone',
+                        'key' => $data['pix_key'] ?? '',
+                        'amount' => isset($data['pix_amount']) && $data['pix_amount'] !== ''
+                            ? (float) $data['pix_amount']
+                            : null,
+                    ], fn ($value) => $value !== null && $value !== ''),
+                    $data['interactive_title'] ?? null,
+                    $data['interactive_footer'] ?? null,
+                ),
+                MessageTypeEnum::LIST => $service->sendList(
+                    $instanceId,
+                    $number,
+                    $data['list_title'] ?? '',
+                    $data['list_description'] ?? '',
+                    $data['list_button_text'] ?? '',
+                    $this->buildListSections($data['list_sections'] ?? []),
+                    $data['list_footer'] ?? null,
+                ),
+                MessageTypeEnum::CAROUSEL => $service->sendCarousel(
+                    $instanceId,
+                    $number,
+                    $data['carousel_message'] ?? '',
+                    $this->buildCarouselCards($data['carousel_cards'] ?? []),
+                ),
                 default => throw new \Exception(__('filament-evolution::action.unsupported_type')),
             };
 
@@ -530,5 +827,105 @@ class SendWhatsappMessageAction extends Action
 
             throw $e;
         }
+    }
+
+    /**
+     * Normalize reply-button repeater rows for Evolution API.
+     */
+    protected function buildReplyButtons(array $rows): array
+    {
+        return array_values(array_map(
+            fn (array $row): array => [
+                'type' => 'reply',
+                'displayText' => $row['displayText'] ?? '',
+                'id' => $row['id'] ?? '',
+            ],
+            array_filter($rows, fn ($row) => is_array($row)),
+        ));
+    }
+
+    /**
+     * Normalize CTA-button repeater rows for Evolution API.
+     * Each row stores its target in a generic `value` field; we route it to the
+     * type-specific key the API expects (url / phoneNumber / copyCode).
+     */
+    protected function buildCtaButtons(array $rows): array
+    {
+        $valueKey = [
+            'url' => 'url',
+            'call' => 'phoneNumber',
+            'copy' => 'copyCode',
+        ];
+
+        return array_values(array_map(function (array $row) use ($valueKey): array {
+            $type = $row['type'] ?? 'url';
+
+            return [
+                'type' => $type,
+                'displayText' => $row['displayText'] ?? '',
+                $valueKey[$type] ?? 'url' => $row['value'] ?? '',
+            ];
+        }, array_filter($rows, fn ($row) => is_array($row))));
+    }
+
+    /**
+     * Normalize list sections repeater rows for Evolution API.
+     */
+    protected function buildListSections(array $rows): array
+    {
+        return array_values(array_map(
+            fn (array $row): array => [
+                'title' => $row['title'] ?? '',
+                'rows' => array_values(array_map(
+                    fn (array $innerRow): array => array_filter([
+                        'title' => $innerRow['title'] ?? '',
+                        'description' => $innerRow['description'] ?? null,
+                        'rowId' => $innerRow['rowId'] ?? '',
+                    ], fn ($value) => $value !== null && $value !== ''),
+                    array_filter($row['rows'] ?? [], fn ($r) => is_array($r)),
+                )),
+            ],
+            array_filter($rows, fn ($row) => is_array($row)),
+        ));
+    }
+
+    /**
+     * Normalize carousel card repeater rows for Evolution API.
+     */
+    protected function buildCarouselCards(array $rows): array
+    {
+        $ctaValueKey = [
+            'url' => 'url',
+            'call' => 'phoneNumber',
+            'copy' => 'copyCode',
+        ];
+
+        return array_values(array_map(function (array $row) use ($ctaValueKey): array {
+            $buttons = array_values(array_map(function (array $button) use ($ctaValueKey): array {
+                $type = $button['type'] ?? 'reply';
+
+                if ($type === 'reply') {
+                    return [
+                        'type' => 'reply',
+                        'displayText' => $button['displayText'] ?? '',
+                        'id' => $button['value'] ?? '',
+                    ];
+                }
+
+                return [
+                    'type' => $type,
+                    'displayText' => $button['displayText'] ?? '',
+                    $ctaValueKey[$type] ?? 'url' => $button['value'] ?? '',
+                ];
+            }, array_filter($row['buttons'] ?? [], fn ($b) => is_array($b))));
+
+            return array_filter([
+                'imageUrl' => $row['imageUrl'] ?? null,
+                'header' => $row['header'] ?? null,
+                'body' => $row['body'] ?? null,
+                'footer' => $row['footer'] ?? null,
+                'buttons' => $buttons,
+            ], fn ($value) => $value !== null && $value !== '' && $value !== []);
+        }, array_filter($rows, fn ($row) => is_array($row))));
     }
 }

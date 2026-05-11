@@ -18,6 +18,11 @@ enum MessageTypeEnum: string implements HasColor, HasIcon, HasLabel
     case LOCATION = 'location';
     case CONTACT = 'contact';
     case STICKER = 'sticker';
+    case BUTTONS = 'buttons';
+    case LIST = 'list';
+    case CTA = 'cta';
+    case PIX = 'pix';
+    case CAROUSEL = 'carousel';
 
     public function getLabel(): string
     {
@@ -30,6 +35,11 @@ enum MessageTypeEnum: string implements HasColor, HasIcon, HasLabel
             self::LOCATION => __('filament-evolution::enums.message_type.location'),
             self::CONTACT => __('filament-evolution::enums.message_type.contact'),
             self::STICKER => __('filament-evolution::enums.message_type.sticker'),
+            self::BUTTONS => __('filament-evolution::enums.message_type.buttons'),
+            self::LIST => __('filament-evolution::enums.message_type.list'),
+            self::CTA => __('filament-evolution::enums.message_type.cta'),
+            self::PIX => __('filament-evolution::enums.message_type.pix'),
+            self::CAROUSEL => __('filament-evolution::enums.message_type.carousel'),
         };
     }
 
@@ -44,6 +54,11 @@ enum MessageTypeEnum: string implements HasColor, HasIcon, HasLabel
             self::LOCATION => 'danger',
             self::CONTACT => 'gray',
             self::STICKER => 'warning',
+            self::BUTTONS => 'info',
+            self::LIST => 'info',
+            self::CTA => 'primary',
+            self::PIX => 'success',
+            self::CAROUSEL => 'primary',
         };
     }
 
@@ -58,6 +73,11 @@ enum MessageTypeEnum: string implements HasColor, HasIcon, HasLabel
             self::LOCATION => 'heroicon-o-map-pin',
             self::CONTACT => 'heroicon-o-user',
             self::STICKER => 'heroicon-o-face-smile',
+            self::BUTTONS => 'heroicon-o-cursor-arrow-rays',
+            self::LIST => 'heroicon-o-list-bullet',
+            self::CTA => 'heroicon-o-link',
+            self::PIX => 'heroicon-o-banknotes',
+            self::CAROUSEL => 'heroicon-o-rectangle-stack',
         };
     }
 
@@ -69,5 +89,16 @@ enum MessageTypeEnum: string implements HasColor, HasIcon, HasLabel
     public function isText(): bool
     {
         return $this === self::TEXT;
+    }
+
+    public function isInteractive(): bool
+    {
+        return in_array($this, [
+            self::BUTTONS,
+            self::LIST,
+            self::CTA,
+            self::PIX,
+            self::CAROUSEL,
+        ], true);
     }
 }

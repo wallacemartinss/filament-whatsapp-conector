@@ -19,6 +19,11 @@ return [
         'location' => 'Konum',
         'contact' => 'Kişi',
         'sticker' => 'Çıkartma',
+        'buttons' => 'Buttons',
+        'list' => 'List',
+        'cta' => 'CTA',
+        'pix' => 'PIX',
+        'carousel' => 'Carousel',
     ],
 
     'message_direction' => [
