@@ -80,7 +80,7 @@ class WhatsappInstanceResource extends Resource
     {
         return $form
             ->schema([
-                Tabs::make(__('filament-evolution::resource.model_label'))
+                Tabs::make('Instance')
                     ->tabs([
                         Tabs\Tab::make(__('filament-evolution::resource.sections.instance_info'))
                             ->icon(Heroicon::InformationCircle)

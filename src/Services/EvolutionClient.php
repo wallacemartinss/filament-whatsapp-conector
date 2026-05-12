@@ -470,12 +470,9 @@ class EvolutionClient
             'title' => $title,
             'description' => $description,
             'buttonText' => $buttonText,
+            'footerText' => $footerText ?? '',
             'sections' => array_values($sections),
         ], $options);
-
-        if ($footerText !== null && $footerText !== '') {
-            $data['footerText'] = $footerText;
-        }
 
         return $this->request('POST', "/message/sendList/{$instanceName}", $data);
     }
@@ -505,7 +502,7 @@ class EvolutionClient
     ): array {
         $data = array_merge([
             'number' => $number,
-            'message' => $message,
+            'body' => $message,
             'cards' => array_values($cards),
         ], $options);
 

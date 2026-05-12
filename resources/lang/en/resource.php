@@ -58,8 +58,5 @@ return [
         'connected' => 'Instance connected successfully',
         'disconnected' => 'Instance disconnected successfully',
         'connection_failed' => 'Failed to connect instance',
-        'api_created' => 'Account created in Evolution API',
-        'api_sync_failed' => 'Account saved locally. API sync failed:',
-        'api_create_failed' => 'Failed to create account',
     ],
 ];
