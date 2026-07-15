@@ -1,0 +1,16 @@
+version: 2
+
+updates:
+  # GitHub Actions — keeps the SHA-pinned action references current, bumping
+  # both the pinned commit and the version comment as new releases land.
+  # It is the only ecosystem with committed manifests here: composer.lock is
+  # gitignored and there is no JS lockfile, so there is nothing for Dependabot
+  # to maintain on the Composer or npm side.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        patterns:
+          - "*"
