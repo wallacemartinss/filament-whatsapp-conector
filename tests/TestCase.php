@@ -7,6 +7,7 @@ namespace WallaceMartinss\FilamentEvolution\Tests;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
+use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 use WallaceMartinss\FilamentEvolution\FilamentEvolutionServiceProvider;
 
@@ -80,6 +81,7 @@ abstract class TestCase extends Orchestra
     protected function getPackageProviders($app): array
     {
         return [
+            LivewireServiceProvider::class,
             FilamentEvolutionServiceProvider::class,
         ];
     }
