@@ -19,7 +19,7 @@ use WallaceMartinss\FilamentEvolution\Services\WhatsappService;
  * @method static \WallaceMartinss\FilamentEvolution\Models\WhatsappInstance|null getInstance(string|int $instanceId)
  * @method static \Illuminate\Database\Eloquent\Collection getConnectedInstances()
  *
- * @see \WallaceMartinss\FilamentEvolution\Services\WhatsappService
+ * @see WhatsappService
  */
 class Whatsapp extends Facade
 {

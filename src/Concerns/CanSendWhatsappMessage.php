@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace WallaceMartinss\FilamentEvolution\Concerns;
 
+use Illuminate\Database\Eloquent\Collection;
 use WallaceMartinss\FilamentEvolution\Enums\MessageTypeEnum;
 use WallaceMartinss\FilamentEvolution\Exceptions\EvolutionApiException;
 use WallaceMartinss\FilamentEvolution\Models\WhatsappInstance;
@@ -233,9 +234,9 @@ trait CanSendWhatsappMessage
     /**
      * Get all connected WhatsApp instances.
      *
-     * @return \Illuminate\Database\Eloquent\Collection<WhatsappInstance>
+     * @return Collection<WhatsappInstance>
      */
-    protected function getConnectedWhatsappInstances(): \Illuminate\Database\Eloquent\Collection
+    protected function getConnectedWhatsappInstances(): Collection
     {
         return $this->whatsappService()->getConnectedInstances();
     }
