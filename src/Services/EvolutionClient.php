@@ -7,6 +7,7 @@ namespace WallaceMartinss\FilamentEvolution\Services;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use WallaceMartinss\FilamentEvolution\Exceptions\EvolutionApiException;
 
 class EvolutionClient
@@ -84,7 +85,7 @@ class EvolutionClient
             $message = $body['message'] ?? $body['error'] ?? 'Unknown API error';
 
             // Log the full response for debugging
-            \Illuminate\Support\Facades\Log::error('Evolution API Error', [
+            Log::error('Evolution API Error', [
                 'status' => $response->status(),
                 'body' => $body,
             ]);
