@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use WallaceMartinss\FilamentEvolution\Jobs\ProcessWebhookJob;
+use WallaceMartinss\FilamentEvolution\Models\WhatsappInstance;
 use WallaceMartinss\FilamentEvolution\Models\WhatsappWebhook;
 
 class WebhookController extends Controller
@@ -72,7 +73,7 @@ class WebhookController extends Controller
         $instance = null;
 
         if ($instanceName) {
-            $instance = \WallaceMartinss\FilamentEvolution\Models\WhatsappInstance::where('name', $instanceName)->first();
+            $instance = WhatsappInstance::where('name', $instanceName)->first();
         }
 
         return WhatsappWebhook::create([
