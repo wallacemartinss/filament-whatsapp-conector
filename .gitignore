@@ -8,3 +8,4 @@ composer.lock
 coverage/
 .php-cs-fixer.cache
 phpstan.neon
+CLAUDE.md

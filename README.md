@@ -148,6 +148,9 @@ EVOLUTION_WEBHOOK_URL=https://your-app.com/api/evolution/webhook
 # Webhook Secret (Optional - for security)
 EVOLUTION_WEBHOOK_SECRET=your_secret_key
 
+# Webhook Enabled (Optional - for receiving webhooks events)
+EVOLUTION_WEBHOOK_ENABLED=true or false
+
 # Default Instance (Optional - for single instance setups)
 EVOLUTION_DEFAULT_INSTANCE=your_instance_id
 ```

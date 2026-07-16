@@ -35,6 +35,7 @@ return [
         'secret' => env('EVOLUTION_WEBHOOK_SECRET'),
         'path' => 'api/evolution/webhook',
         'base64' => false,
+        'enabled' => env('EVOLUTION_WEBHOOK_ENABLED'),
         'events' => [
             'APPLICATION_STARTUP',
             'QRCODE_UPDATED',
